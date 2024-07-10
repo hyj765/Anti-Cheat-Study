@@ -14,14 +14,9 @@ namespace HYJ
 	{
 	public:
 		Task(Function fn, Args... s) : f(fn), arguments(s...) {};
-
 		std::pair<HANDLE, DWORD> runThread();
-		
-
 	private:
-
 		static DWORD WINAPI ThreadProc(LPVOID lpParameter);
-		
 		Function f;
 		std::tuple<Args...> arguments;
 
