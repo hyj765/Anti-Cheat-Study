@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <functional>
+#pragma once
 
 namespace HYJ
 {
@@ -150,16 +152,38 @@ namespace HYJ
 
 	public:
 		bool isProcessDebugged() noexcept;
-		bool CheckDebugPort() noexcept;
+		
+        bool CheckDebugPort() noexcept;
+        
         bool CheckDebugFlags()noexcept;
+        
         bool CheckDebugObjectHandle()noexcept;
+        
         bool CheckProcessHeapFlags() noexcept;
+        
+        bool CheckHardWareCheckPoint() noexcept;
+        
+        template<typename FUNCTION, typename... ARGS>
+        static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);
+
 
 	private:
 		AntiDebugger();
 		struct WinAPIList winApis;
 		struct WinModuleList winModules;
 	};
+
+    
+    template<typename FUNCTION, typename... ARGS>
+    bool AntiDebugger::CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args) 
+    {
+        DWORD startTime = GetTickCount();
+
+        std::invoke(function, std::forward<ARGS>(args)...);
+        DWORD proceedingTime = GetTickCount() - startTime;
+        return (proceedingTime > LimiteProceedingTime);
+    }
+    
 
     
 }

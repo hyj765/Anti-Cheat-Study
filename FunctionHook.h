@@ -7,6 +7,8 @@ namespace HYJ
 	{
 	public:
 		void SetHook(void* targetFunctionAddress, void* hookFunctionAddress);
+		bool FunctionBlock(void* address);
+
 	private:
 
 	};

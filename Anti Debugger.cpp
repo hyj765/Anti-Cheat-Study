@@ -69,6 +69,19 @@ namespace HYJ
 		return true;
 	}
 
+	bool AntiDebugger::CheckHardWareCheckPoint() noexcept
+	{
+		CONTEXT context = { 0, };
+		
+		context.ContextFlags = CONTEXT_DEBUG_REGISTERS;
+		if (!GetThreadContext(GetCurrentThread(), &context))
+		{
+			return false;
+		}
+
+		return context.Dr0 || context.Dr1 || context.Dr2 || context.Dr3;
+	}
+
 
 	AntiDebugger::AntiDebugger()
 	{
@@ -77,10 +90,7 @@ namespace HYJ
 		winApis.pNtqueryInfomation = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
 
 	}
-
-
-
-
+	
 
 
 

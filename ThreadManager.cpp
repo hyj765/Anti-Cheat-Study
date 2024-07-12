@@ -54,6 +54,7 @@ namespace HYJ
 	template <typename Function, typename... Args>
 	std::pair<HANDLE, DWORD> Task<Function, Args...>::runThread()
 	{
+		
 		DWORD threadId = 0;
 		HANDLE hThread = CreateThread(nullptr, 0, ThreadProc, static_cast<void*>(this), 0, &threadId);
 
