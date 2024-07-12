@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include<vector>
 #include<string>
+#include<iostream>
 
 namespace HYJ
 {
@@ -16,7 +17,7 @@ namespace HYJ
 		PIMAGE_OPTIONAL_HEADER GetOptionalHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept;
 		std::vector<PIMAGE_SECTION_HEADER> GetAllSectionHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept;
 		PIMAGE_SECTION_HEADER GetSectionHeader(const char* sectionHeaderName) noexcept;
-		//unsigned char** GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept;
+		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept;
 	
 		PEParser();
 	private:

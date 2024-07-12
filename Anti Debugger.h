@@ -124,7 +124,8 @@ namespace HYJ
         ProcessFindFirstThreadByTebValue, // PROCESS_TEB_VALUE_INFORMATION
         MaxProcessInfoClass
     } PROCESSINFOCLASS;
-	struct WinAPITypeList
+	
+    struct WinAPITypeList
 	{
 		typedef void (WINAPI* BaseThreadInitThunkType)(DWORD, LPTHREAD_START_ROUTINE, LPVOID);
         typedef NTSTATUS(NTAPI* pNtqueryInformationProcess)(
@@ -166,7 +167,6 @@ namespace HYJ
         template<typename FUNCTION, typename... ARGS>
         static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);
 
-
 	private:
 		AntiDebugger();
 		struct WinAPIList winApis;
@@ -178,9 +178,10 @@ namespace HYJ
     bool AntiDebugger::CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args) 
     {
         DWORD startTime = GetTickCount();
-
+        
         std::invoke(function, std::forward<ARGS>(args)...);
         DWORD proceedingTime = GetTickCount() - startTime;
+
         return (proceedingTime > LimiteProceedingTime);
     }
     

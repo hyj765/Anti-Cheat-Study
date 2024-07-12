@@ -130,15 +130,18 @@ namespace HYJ
 		return nullptr;
 	}
 
-	/*
-	unsigned char** PEParser::GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept
+	
+	std::unique_ptr<unsigned char[]> PEParser::GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept
 	{
-		std::unique_ptr<unsigned char*> bytes = std::make_unique<unsigned char*>(sectionHeader->Misc.VirtualSize);
-		memcpy(bytes.get(), (reinterpret_cast<char*>(imagebase) + sectionHeader->VirtualAddress), sectionHeader->Misc.VirtualSize);
-		return bytes.release();
+		std::unique_ptr<unsigned char[]> bytes = std::make_unique<unsigned char[]>(sectionHeader->Misc.VirtualSize);
+		
+		long sectionVirtualAddress = static_cast<long>(sectionHeader->VirtualAddress);
+		memcpy(bytes.get(), (reinterpret_cast<char*>(imagebase) + sectionVirtualAddress), sectionHeader->Misc.VirtualSize);
+		
+		return bytes;
 	}
 
-	*/
+	
 
 
 }
