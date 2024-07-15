@@ -1,4 +1,5 @@
 #pragma once
+#include<map>
 
 namespace HYJ
 {
@@ -7,10 +8,10 @@ namespace HYJ
 	{
 	public:
 		void SetHook(void* targetFunctionAddress, void* hookFunctionAddress);
-		bool FunctionBlock(void* address);
-
+		bool FunctionBlock(void* address, int threadNumber);
+		bool FunctionUnBlock(void* address,int threadNumber);
 	private:
-
+		std::map<void*, unsigned char> originalCode;
 	};
 
 }

@@ -10,9 +10,13 @@ namespace HYJ
 	public:
 
 		char* GetCrc32();
+		
 		char* GetSectionHash() noexcept;
+		
 		bool CompareFileIntegrity() noexcept;
+		
 		bool CompareFunctionIntegrity() noexcept;
+		
 		bool DllIntegrity() noexcept;
 
 	private:

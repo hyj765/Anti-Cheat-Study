@@ -81,7 +81,7 @@ namespace HYJ
 
 		return context.Dr0 || context.Dr1 || context.Dr2 || context.Dr3;
 	}
-
+	
 
 	AntiDebugger::AntiDebugger()
 	{

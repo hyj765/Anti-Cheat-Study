@@ -9,10 +9,15 @@ namespace HYJ
 	PEParser::PEParser()
 	{
 		imagebase= GetModuleHandle(NULL);
+		
 		dosHeader = GetDosHeader(imagebase);
+		
 		ntHeader = GetNtHeader(imagebase, dosHeader);
+		
 		fileHeader = GetFileHeader(ntHeader);
+		
 		optionalHeader = GetOptionalHeader(ntHeader);
+		
 		sectionHeaders = GetAllSectionHeader(ntHeader);
 
 	}
@@ -30,6 +35,7 @@ namespace HYJ
 		}
 
 		PIMAGE_DOS_HEADER pDosHeader = reinterpret_cast<PIMAGE_DOS_HEADER>(imagebase);
+
 		if (pDosHeader != nullptr)
 		{
 			return pDosHeader;
@@ -94,12 +100,18 @@ namespace HYJ
 		}
 
 		PIMAGE_SECTION_HEADER pSectionHeader = IMAGE_FIRST_SECTION(ntHeader);
+		
 		std::vector<PIMAGE_SECTION_HEADER> sectionHeaderArray;
+		
 		for (int i = 0; i < ntHeader->FileHeader.NumberOfSections; ++i)
 		{
+
 			char* name = reinterpret_cast<char*>(pSectionHeader->Name);
+
 			sectionHeaderArray.push_back(pSectionHeader);
+
 			pSectionHeader++;
+
 		}
 
 		return sectionHeaderArray;
@@ -110,6 +122,7 @@ namespace HYJ
 	* this function return sectionHeader in sectionheaders
 	* so previously getallsectionheader function must be proceeding
 	*/
+
 	PIMAGE_SECTION_HEADER PEParser::GetSectionHeader(const char* sectionHeaderName) noexcept
 	{
 		if (sectionHeaders.size() == 0)
@@ -120,6 +133,7 @@ namespace HYJ
 		for (int i = 0; i < sectionHeaders.size(); ++i)
 		{
 			char* name = reinterpret_cast<char*>(sectionHeaders[i]->Name);
+
 			if (strcmp(name, sectionHeaderName) == 0)
 			{
 				return sectionHeaders[i];
@@ -130,12 +144,12 @@ namespace HYJ
 		return nullptr;
 	}
 
-	
 	std::unique_ptr<unsigned char[]> PEParser::GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept
 	{
 		std::unique_ptr<unsigned char[]> bytes = std::make_unique<unsigned char[]>(sectionHeader->Misc.VirtualSize);
 		
 		long sectionVirtualAddress = static_cast<long>(sectionHeader->VirtualAddress);
+
 		memcpy(bytes.get(), (reinterpret_cast<char*>(imagebase) + sectionVirtualAddress), sectionHeader->Misc.VirtualSize);
 		
 		return bytes;

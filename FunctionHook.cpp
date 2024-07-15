@@ -1,5 +1,6 @@
 #include "FunctionHook.h"
 #include <Windows.h>
+#include <map>
 
 namespace HYJ
 {
@@ -19,15 +20,50 @@ namespace HYJ
 		VirtualProtect(targetFunctionAddress, 12, oldProtect, &oldProtect);
 	}
 
-	bool FunctionHook::FunctionBlock(void* address)
+	bool FunctionHook::FunctionBlock(void* address, int threadNumber)
 	{
 		DWORD oldProtect;
-		if (!VirtualProtect(address, 1, PAGE_EXECUTE_READWRITE, &oldProtect))
+
+		if (threadNumber != GetCurrentThreadId())
 		{
 			return false;
 		}
 
+	
+		if (!VirtualProtect(address, 1, PAGE_EXECUTE_READWRITE, &oldProtect))
+		{
+			return false;
+		}
+		unsigned char originalBytes;
+		memcpy(&originalBytes, address, 1);
+		originalCode[address] = originalBytes;
 		*static_cast<unsigned char*>(address) = static_cast<unsigned char>(0xE3);
+
+		if (!VirtualProtect(address, 1, oldProtect, &oldProtect))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	bool FunctionHook::FunctionUnBlock(void* address, int threadNumber)
+	{
+		DWORD oldProtect;
+
+		if (threadNumber != GetCurrentThreadId())
+		{
+			return false;
+		}
+
+
+		if (!VirtualProtect(address, 1, PAGE_EXECUTE_READWRITE, &oldProtect))
+		{
+			return false;
+		}
+	
+		unsigned char originalBytes = originalCode[address];
+		memcpy(address, &originalBytes, 1);
 
 		if (!VirtualProtect(address, 1, oldProtect, &oldProtect))
 		{
