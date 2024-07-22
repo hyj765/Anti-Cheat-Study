@@ -1,6 +1,5 @@
+#pragma once
 #include "FunctionHook.h"
-#include <Windows.h>
-#include <map>
 
 namespace HYJ
 {

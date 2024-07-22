@@ -1,4 +1,8 @@
+#pragma once
 #include "Anti Debugger.h"
+#include <TlHelp32.h>
+#include <psapi.h>
+#include "util.h"
 
 namespace HYJ
 {
@@ -82,11 +86,59 @@ namespace HYJ
 		return context.Dr0 || context.Dr1 || context.Dr2 || context.Dr3;
 	}
 	
+	bool AntiDebugger::CheckParentIsDebugger()
+	{
+		HANDLE snapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		PROCESSENTRY32 pe = { 0 };
+		pe.dwSize = sizeof(PROCESSENTRY32);
+		DWORD pid = GetCurrentProcessId();
+		if (Process32First(snapShot, &pe))
+		{
+			do {
+				if (pe.th32ParentProcessID == pid)
+				{
+					break;
+				}
+			} while (Process32Next(snapShot, &pe));
+		}
+		CloseHandle(snapShot);
+		HANDLE hProcess;
+		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
+		if (hProcess == NULL)
+		{
+			CloseHandle(hProcess);
+			return false;
+		}
+
+		char nameBuffer[MAX_PATH] = {0,};
+
+		if (GetModuleBaseNameA(hProcess, NULL, nameBuffer, sizeof(nameBuffer)) == 0)
+		{
+			CloseHandle(hProcess);
+			return false;
+		}
+
+		std::vector<std::string> debuggersName = { "ida.exe","ollydbg.exe","ida64.exe", "idag.exe", "idag64.exe", "idaw.exe", "idaw64.exe", "idaq.exe", "idaq64.exe", "idau.exe", "idau64.exe", "scylla.exe", "scylla_x64.exe", "scylla_x86.exe", "protection_id.exe", "x64dbg.exe", "x32dbg.exe", "windbg.exe", "reshacker.exe", "ImportREC.exe", "IMMUNITYDEBUGGER.EXE", "devenv.exe" };
+
+		if (Util::MultiStringSearch(debuggersName, nameBuffer) == false)
+		{
+			return false;
+		}
+
+		return true;
+
+	}
+
+
+
 
 	AntiDebugger::AntiDebugger()
 	{
+		
 		HMODULE ntModule=GetModuleHandleA("ntdll.dll");
+		
 		winModules.hNtDll = ntModule;
+		
 		winApis.pNtqueryInfomation = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
 
 	}

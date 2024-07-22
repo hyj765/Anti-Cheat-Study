@@ -1,6 +1,5 @@
-#include <Windows.h>
-#include <functional>
 #pragma once
+#include "stdafx.h"
 
 namespace HYJ
 {
@@ -152,6 +151,9 @@ namespace HYJ
 	{
 
 	public:
+
+        bool CheckParentIsDebugger();
+
 		bool isProcessDebugged() noexcept;
 		
         bool CheckDebugPort() noexcept;
@@ -171,6 +173,8 @@ namespace HYJ
 		AntiDebugger();
 		struct WinAPIList winApis;
 		struct WinModuleList winModules;
+        
+
 	};
 
     

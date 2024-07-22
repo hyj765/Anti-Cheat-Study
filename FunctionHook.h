@@ -1,5 +1,5 @@
 #pragma once
-#include<map>
+#include "stdafx.h"
 
 namespace HYJ
 {

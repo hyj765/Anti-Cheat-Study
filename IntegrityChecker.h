@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include<unordered_map>
 
+
 namespace HYJ
 {
 
@@ -9,15 +10,17 @@ namespace HYJ
 	{
 	public:
 
-		char* GetCrc32();
-		
 		char* GetSectionHash() noexcept;
 		
+		unsigned char* GetFileHash(const char* fileNmae) noexcept;
+
 		bool CompareFileIntegrity() noexcept;
 		
 		bool CompareFunctionIntegrity() noexcept;
 		
 		bool DllIntegrity() noexcept;
+
+		
 
 	private:
 		IntegrityChecker();

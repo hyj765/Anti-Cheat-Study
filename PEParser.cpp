@@ -57,6 +57,7 @@ namespace HYJ
 		}
 
 		PIMAGE_NT_HEADERS pNtHeader = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<unsigned char*>(imagebase) + dosHeader->e_lfanew);
+		
 		return pNtHeader;
 	}
 
