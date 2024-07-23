@@ -4,19 +4,48 @@
 namespace HYJ
 {
 
-	void FunctionHook::SetHook(void* targetFunctionAddress, void* hookFunctionAddress)
+	bool FunctionHook::SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff = nullptr) 
 	{
 		unsigned char HookCode[12] = { 0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xE0 };
 		
 		DWORD oldProtect;
 		
-		VirtualProtect(targetFunctionAddress, 12, PAGE_EXECUTE_READWRITE, &oldProtect);
+		if (!VirtualProtect(targetFunctionAddress, 12, PAGE_EXECUTE_READWRITE, &oldProtect))
+		{
+			return false;
+		}
 		
+		if (originalBuff != nullptr)
+		{
+			memcpy(targetFunctionAddress, originalBuff, 12);
+		}
+
 	    memcpy((HookCode + 2), &hookFunctionAddress, sizeof(DWORD64));
 
 		memcpy(targetFunctionAddress, HookCode, 12);
 
-		VirtualProtect(targetFunctionAddress, 12, oldProtect, &oldProtect);
+
+		if (!VirtualProtect(targetFunctionAddress, 12, oldProtect, &oldProtect))
+		{
+			return false;
+		}
+	}
+
+	bool FunctionHook::UnHook(void* targetFunctionAddress, unsigned char* originalBytes) 
+	{
+		DWORD oldProtect;
+		if (!VirtualProtect(targetFunctionAddress, 12, PAGE_EXECUTE_READWRITE, &oldProtect))
+		{
+			return false;
+		}
+		
+		memcpy(targetFunctionAddress, originalBytes, 12);
+
+		if (VirtualProtect(targetFunctionAddress, 12, oldProtect, &oldProtect))
+		{
+			return false;
+		}
+
 	}
 
 	bool FunctionHook::FunctionBlock(void* address, int threadNumber)
@@ -33,6 +62,7 @@ namespace HYJ
 		{
 			return false;
 		}
+
 		unsigned char originalBytes;
 		memcpy(&originalBytes, address, 1);
 		originalCode[address] = originalBytes;

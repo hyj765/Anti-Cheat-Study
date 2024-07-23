@@ -6,7 +6,10 @@ namespace HYJ
 {
 	class FunctionHook;
 	class AntiDebugger;
+	/*
+		ProcessProtector class include each Classes Anti Dll, Anti Debugger, Integrity Check class
 
+	*/
 	class ProcessProtector
 	{
 	public:
@@ -26,15 +29,28 @@ namespace HYJ
 			
 
 		*/
-		ProcessProtector();
+		ProcessProtector& GetInstance()
+		{
+			static ProcessProtector instance;
+			return instance;
+		}
+		
+		/*
+			Memory Protection Option Dep Enable Function
+		*/	
+		bool MemoryProtectionDep() noexcept;
 
-		bool RegistThreadFilterFunction(void* address) noexcept;
-
+		/*
+		
+		*/
+		bool AntiDllinjection();
+		
 		bool MutiClientCheck();
 		/*
 		  function Blocking function it's change first assembly code to ret
 		  so the function which this function is applied is returned without being excuted
 		*/
+		bool HookLoadLibrary(void* functionAddress);
 		bool BlockFunction(void* Address);
 		/*
 			this function restore to blocking function's assembly code 
@@ -42,11 +58,19 @@ namespace HYJ
 		bool OpenFunction(void* Address);
 		// even this two function's are using critical section but it take a lot of cost
 	private:
+		ProcessProtector();
+		~ProcessProtector();
+		ProcessProtector& operator=(ProcessProtector& ref);
+
+		void __fastcall RegistThreadFilterFunction(DWORD LdrReserved, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter);
+		typedef void(__fastcall* BaseThreadInitThunkType)(DWORD, LPTHREAD_START_ROUTINE, PVOID);
 		FunctionHook* hookmanager;
 		AntiDebugger* AntiDebugger;
+		int threadNumber = 0;
+		DWORD mainThreadId;
 		CRITICAL_SECTION criticalSection;
-		std::atomic<int> threadNumber = 0;
-		
+		unsigned char originalThreadThunkBytes[12] = { 0, };
+
 	};
 
 	class DataEncryptor

@@ -2,12 +2,30 @@
 #include "Anti Debugger.h"
 #include "FunctionHook.h"
 #include <TlHelp32.h>
+#include "ThreadManager.h"
 
 namespace HYJ
 {
 
-	ProcessProtector::ProcessProtector() {};
+	ProcessProtector::ProcessProtector() : mainThreadId(GetCurrentThreadId()) {};
 	
+	bool ProcessProtector::HookLoadLibrary(void* functionAddress)
+	{
+		DWORD threadId = GetCurrentThreadId();
+		
+		if (threadId != mainThreadId && ThreadManager::getInstance().FindHandleByThreadId(threadId) == false)
+		{
+			return false;
+		}
+
+		HMODULE kernel32Handle =LoadLibraryA("kernel32.dll");
+		void* address = GetProcAddress(kernel32Handle, "LoadLibarayA");
+	
+		hookmanager->SetHook(address, functionAddress);
+
+		return true;
+	}
+
 	bool ProcessProtector::BlockFunction(void* address) 
 	{
 		bool status = false;
@@ -44,15 +62,23 @@ namespace HYJ
 		return status;
 	}
 
-	bool ProcessProtector::RegistThreadFilterFunction(void* address) noexcept
+	
+	void __fastcall ProcessProtector::RegistThreadFilterFunction(DWORD LdrReserved, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter)
 	{
 
-		HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
-		void* functionAddress = GetProcAddress(kernel32, "BaseThreadInitThunk");
 		
-		hookmanager->SetHook(functionAddress, address);
 
-		return true;
+	}
+
+	bool ProcessProtector::AntiDllinjection()
+	{
+		HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
+
+		BaseThreadInitThunkType functionAddress = reinterpret_cast<BaseThreadInitThunkType>(GetProcAddress(kernel32, "BaseThreadInitThunk"));
+		
+
+		//hookmanager->SetHook(functionAddress, address,originalThreadThunkBytes);
+
 	}
 
 	bool ProcessProtector::MutiClientCheck() 
@@ -81,8 +107,17 @@ namespace HYJ
 			return false;
 		}
 
+	}
 
+	bool ProcessProtector::MemoryProtectionDep() noexcept
+	{
+		
+		if (SetProcessDEPPolicy(PROCESS_DEP_ENABLE))
+		{
+			return true;
+		}
 
+		return false;
 	}
 
 }

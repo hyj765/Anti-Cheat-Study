@@ -6,6 +6,7 @@
 
 namespace HYJ
 {
+	
 
 	bool AntiDebugger::isProcessDebugged() noexcept
 	{

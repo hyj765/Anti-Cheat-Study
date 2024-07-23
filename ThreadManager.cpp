@@ -1,9 +1,24 @@
 #include "ThreadManager.h"
 #include <functional>
 #include <vector>
+#include <thread>
+#include <future>
+#include <random>
 
 namespace HYJ
 {
+
+	template <typename Function, typename... Args>
+	std::pair<HANDLE, DWORD> Task<Function, Args...>::runThread()
+	{
+
+		DWORD threadId = 0;
+		HANDLE hThread = CreateThread(nullptr, 0, ThreadProc, static_cast<void*>(this), 0, &threadId);
+
+		return std::make_pair(hThread, threadId);
+	}
+
+
 
 	ThreadManager::~ThreadManager()
 	{
@@ -51,15 +66,6 @@ namespace HYJ
 		CloseHandle(hThread);
 	}
 
-	template <typename Function, typename... Args>
-	std::pair<HANDLE, DWORD> Task<Function, Args...>::runThread()
-	{
-		
-		DWORD threadId = 0;
-		HANDLE hThread = CreateThread(nullptr, 0, ThreadProc, static_cast<void*>(this), 0, &threadId);
-
-		return std::make_pair(hThread, threadId);
-	}
 
 	template <typename Function, typename... Args>
 	DWORD WINAPI Task<Function, Args...>::ThreadProc(LPVOID lpParameter)
@@ -68,7 +74,36 @@ namespace HYJ
 		std::apply(self->f, self->arguments);
 
 		ThreadManager::getInstance().NotificationThreadExit(GetCurrentThreadId());
+
 		return 0;
 	}
+
+	template <typename Function, typename... Args>
+	DWORD ThreadManager::CreateThreads(Function&& func, bool WaitFlag, Args&&... args)
+	{
+		HANDLE threadHandle = NULL;
+
+		DWORD threadId = 0;
+
+
+		auto task = Task(func, args...);
+		std::pair<HANDLE, DWORD> threadInfo = task.runThread();
+
+		if (threadInfo.second == 0 || threadInfo.first == INVALID_HANDLE_VALUE)
+		{
+			return -1;
+		}
+
+
+		InsertTaskList(threadInfo.second, threadInfo.first);
+
+		if (WaitFlag)
+		{
+			WaitForSingleObject(threadInfo.first, INFINITE);
+		}
+
+		return threadInfo.second;
+	}
+
 
 }

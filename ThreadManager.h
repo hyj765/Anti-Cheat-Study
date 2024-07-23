@@ -1,13 +1,11 @@
 #pragma once
-#include<Windows.h>
+#include"stdafx.h"
 #include<mutex>
 #include<map>
 #include<tuple>
-#include<vector>
 
 namespace HYJ
 {
-	class ThreadManager;
 
 	template <typename Function, typename... Args>
 	class Task
@@ -15,8 +13,10 @@ namespace HYJ
 	public:
 		Task(Function fn, Args... s) : f(fn), arguments(s...) {};
 		std::pair<HANDLE, DWORD> runThread();
+
 	private:
 		static DWORD WINAPI ThreadProc(LPVOID lpParameter);
+		template<typename T>
 		Function f;
 		std::tuple<Args...> arguments;
 
@@ -31,6 +31,9 @@ namespace HYJ
 			static ThreadManager instance;
 			return instance;
 		}
+
+		template<typename T, typename Function, typename... Args>
+		T CreateTaskAsync(Function&& func, Args&&... args);
 
 		template <typename Function, typename... Args>
 		DWORD CreateThreads(Function&& func, bool WaitFlag,Args&&... args);
@@ -76,7 +79,8 @@ namespace HYJ
 	private:
 		std::mutex mtx;
 		std::vector<std::pair<DWORD, HANDLE>> taskLists;
-
+		std::vector<DWORD> asyncTaskList;
+		
 		ThreadManager() = default;
 		
 		~ThreadManager();
@@ -90,31 +94,7 @@ namespace HYJ
 
 
 
-	template <typename Function, typename... Args>
-	DWORD ThreadManager::CreateThreads(Function&& func, bool WaitFlag ,Args&&... args)
-	{
-		HANDLE threadHandle = NULL;
+	
 
-		DWORD threadId = 0;
-
-		
-		auto task = Task(func, args...);
-		std::pair<HANDLE, DWORD> threadInfo = task.runThread();
-		
-		if (threadInfo.second == 0 || threadInfo.first == INVALID_HANDLE_VALUE)
-		{
-			return -1;
-		}
-
-
-		InsertTaskList(threadInfo.second, threadInfo.first);
-		
-		if (WaitFlag)
-		{
-			WaitForSingleObject(threadInfo.first, INFINITE);
-		}
-
-		return threadInfo.second;
-	}
 
 }
