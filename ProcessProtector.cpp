@@ -6,14 +6,24 @@
 
 namespace HYJ
 {
+	unsigned char ProcessProtector::originalThreadThunkBytes[12] = { 0 };
+	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
-	ProcessProtector::ProcessProtector() : mainThreadId(GetCurrentThreadId()) {};
+	ProcessProtector::ProcessProtector() : mainThreadId(GetCurrentThreadId())
+	{
+		InitializeCriticalSection(&criticalSection);
+	};
 	
+	ProcessProtector::~ProcessProtector() 
+	{
+		DeleteCriticalSection(&criticalSection);
+	};
+
 	bool ProcessProtector::HookLoadLibrary(void* functionAddress)
 	{
 		DWORD threadId = GetCurrentThreadId();
 		
-		if (threadId != mainThreadId && ThreadManager::getInstance().FindHandleByThreadId(threadId) == false)
+		if (threadId != mainThreadId && ThreadManager::getInstance().IsThreadCreateByThreadManager(threadId) == false)
 		{
 			return false;
 		}
@@ -51,7 +61,7 @@ namespace HYJ
 		EnterCriticalSection(&criticalSection);
 		threadNumber = GetCurrentThreadId();
 		
-		if (OpenFunction(address))
+		if (hookmanager->FunctionUnBlock(address, threadNumber))
 		{
 			status = true;
 		}
@@ -65,20 +75,39 @@ namespace HYJ
 	
 	void __fastcall ProcessProtector::RegistThreadFilterFunction(DWORD LdrReserved, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter)
 	{
+		MEMORY_BASIC_INFORMATION memInfo;
+		if (VirtualQuery(lpStartAddress, &memInfo, sizeof(memInfo)))
+		{
+			if (memInfo.Type == MEM_PRIVATE) //This means that another process has allocated memory to my process through a function such as virtualalloc.
+			{
+				printf("Invalid Memory Access Detected\n");
+				return;
+			}
+		}
 
-		
 
+
+		FunctionHook::UnHook(functionAddress,originalThreadThunkBytes);
+		functionAddress(LdrReserved, lpStartAddress, lpParameter);
+		FunctionHook::SetHook(functionAddress,RegistThreadFilterFunction);
 	}
 
 	bool ProcessProtector::AntiDllinjection()
 	{
 		HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
+		if (kernel32 == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
 
-		BaseThreadInitThunkType functionAddress = reinterpret_cast<BaseThreadInitThunkType>(GetProcAddress(kernel32, "BaseThreadInitThunk"));
+		functionAddress = reinterpret_cast<WinAPITypeList::BaseThreadInitThunkType>(GetProcAddress(kernel32, "BaseThreadInitThunk"));
 		
+		if (FunctionHook::SetHook(functionAddress, RegistThreadFilterFunction, originalThreadThunkBytes) == false)
+		{
+			return false;
+		}
 
-		//hookmanager->SetHook(functionAddress, address,originalThreadThunkBytes);
-
+		return true;
 	}
 
 	bool ProcessProtector::MutiClientCheck() 
@@ -107,6 +136,7 @@ namespace HYJ
 			return false;
 		}
 
+		return false;
 	}
 
 	bool ProcessProtector::MemoryProtectionDep() noexcept

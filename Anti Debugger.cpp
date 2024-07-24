@@ -16,8 +16,16 @@ namespace HYJ
 	bool AntiDebugger::CheckDebugPort() noexcept
 	{
 		DWORD dwProcessDebugPort, dwReturned;
-		NTSTATUS status = winApis.pNtqueryInfomation(GetCurrentProcess(), ProcessDebugPort, &dwProcessDebugPort, sizeof(DWORD), &dwReturned);
-		
+
+		int status =NtQueryInformationProcess(GetCurrentProcess(), ProcessDebugPort, &dwProcessDebugPort, sizeof(DWORD), &dwReturned);
+
+		/*
+		NTSTATUS status = NtQueryInformationProcess(GetCurrentProcess(),
+			ProcessDebugPort, 
+			&dwProcessDebugPort,
+			sizeof(DWORD),
+			&dwReturned);
+		*/
 		if (status >= 0 )
 		{
 			if (dwProcessDebugPort == -1)
@@ -32,7 +40,7 @@ namespace HYJ
 	bool AntiDebugger::CheckDebugFlags() noexcept
 	{
 		DWORD dwProcessFlags, dwReturned;
-		NTSTATUS status = winApis.pNtqueryInfomation(GetCurrentProcess(), ProcessDebugFlags, &dwProcessFlags, sizeof(DWORD),&dwReturned);
+		NTSTATUS status = NtQueryInformationProcess(GetCurrentProcess(), ProcessDebugFlags, &dwProcessFlags, sizeof(DWORD),&dwReturned);
 		if (status >= 0)
 		{
 			if (dwProcessFlags == 0)
@@ -48,7 +56,7 @@ namespace HYJ
 	{
 		HANDLE hProcessDebugHandle;
 		DWORD dwReturned;
-		NTSTATUS status = winApis.pNtqueryInfomation(GetCurrentProcess(), ProcessDebugObjectHandle, &hProcessDebugHandle, sizeof(HANDLE), &dwReturned);
+		NTSTATUS status = NtQueryInformationProcess(GetCurrentProcess(), ProcessDebugObjectHandle, &hProcessDebugHandle, sizeof(HANDLE), &dwReturned);
 		
 		if (status >= 0)
 		{
@@ -137,10 +145,7 @@ namespace HYJ
 	{
 		
 		HMODULE ntModule=GetModuleHandleA("ntdll.dll");
-		
-		winModules.hNtDll = ntModule;
-		
-		winApis.pNtqueryInfomation = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
+		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
 
 	}
 	

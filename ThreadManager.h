@@ -16,7 +16,6 @@ namespace HYJ
 
 	private:
 		static DWORD WINAPI ThreadProc(LPVOID lpParameter);
-		template<typename T>
 		Function f;
 		std::tuple<Args...> arguments;
 

@@ -36,22 +36,31 @@ namespace HYJ
 			return nullptr;
 		}
 
-		DWORD fileSize = 0;
-		if ((fileSize = GetFileSize(hFile, NULL)) == NULL)
+		DWORD fileSize = GetFileSize(hFile, NULL);
+		if (fileSize == INVALID_FILE_SIZE)
 		{
 			return nullptr;
 		}
 
 		std::unique_ptr<unsigned char[]> buffer = std::make_unique<unsigned char[]>(fileSize);
+		
 		OVERLAPPED ol = { 0 };
+		
 		ol.Offset = 0;
 		ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+		
 		DWORD readBytes = 0;
 		DWORD totalRead = 0;
 
 		while (totalRead < fileSize)
 		{
+			if (fileSize - totalRead < bufferSize)
+			{
+				bufferSize = (fileSize - totalRead);
+			}
+
 			bool status = ReadFile(hFile, buffer.get() + totalRead, fileSize, &readBytes, &ol);
+			
 			if (!totalRead)
 			{
 				if (GetLastError() == ERROR_IO_PENDING)

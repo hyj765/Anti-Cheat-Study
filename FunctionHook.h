@@ -8,9 +8,9 @@ namespace HYJ
 	{
 	public:
 		
-		bool SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff = nullptr);
+		static bool SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff = nullptr);
 		
-		bool UnHook(void* targetFunctionAddress, unsigned char* originalBytes);
+		static bool UnHook(void* targetFunctionAddress, unsigned char* originalBytes);
 		
 		bool FunctionBlock(void* address, int threadNumber);
 		

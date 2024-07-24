@@ -1,6 +1,6 @@
 #pragma once
 #include<Windows.h>
-#include<atomic>
+#include "WinApiTypes.h"
 
 namespace HYJ
 {
@@ -29,7 +29,7 @@ namespace HYJ
 			
 
 		*/
-		ProcessProtector& GetInstance()
+		ProcessProtector& GetInstance() noexcept
 		{
 			static ProcessProtector instance;
 			return instance;
@@ -39,7 +39,6 @@ namespace HYJ
 			Memory Protection Option Dep Enable Function
 		*/	
 		bool MemoryProtectionDep() noexcept;
-
 		/*
 		
 		*/
@@ -57,19 +56,40 @@ namespace HYJ
 		*/
 		bool OpenFunction(void* Address);
 		// even this two function's are using critical section but it take a lot of cost
+
+		static void __fastcall RegistThreadFilterFunction(DWORD LdrReserved, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter);
+		
+		static WinAPITypeList::BaseThreadInitThunkType functionAddress;
+		
+		static unsigned char originalThreadThunkBytes[12];
+
+
 	private:
 		ProcessProtector();
+		
 		~ProcessProtector();
-		ProcessProtector& operator=(ProcessProtector& ref);
+		ProcessProtector(const ProcessProtector&) = delete;
+		ProcessProtector(ProcessProtector&&) noexcept = delete;
+		ProcessProtector& operator=(ProcessProtector& ref) = delete;
+		
+	
 
-		void __fastcall RegistThreadFilterFunction(DWORD LdrReserved, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter);
-		typedef void(__fastcall* BaseThreadInitThunkType)(DWORD, LPTHREAD_START_ROUTINE, PVOID);
 		FunctionHook* hookmanager;
+		
 		AntiDebugger* AntiDebugger;
+		
 		int threadNumber = 0;
+		
 		DWORD mainThreadId;
+		
 		CRITICAL_SECTION criticalSection;
-		unsigned char originalThreadThunkBytes[12] = { 0, };
+
+	
+
+		/*
+			datatype이 모인 header 하나 만들고 
+		    해당 주소 값 가지고 있는 테이블 안에 인자로 넣어야할 꺼 같음.
+		*/
 
 	};
 
@@ -79,9 +99,13 @@ namespace HYJ
 		static bool DataEnCryption(T data, BYTE* outPut)
 		{
 			/*
+			
 			size_t EncryptionDataSize = ((sizeof(data) + CRYPTPROTECTMEMORY_BLOCK_SIZE -1) / CRYPTPROTECTMEMORY_BLOCK_SIZE)* CRYPTPROTECTMEMORY_BLOCK_SIZE;
+			
 			CryptProtectMemory(data,EncryptionDataSize, CRYPTPROTECTMEMORY_SAME_PROCESS);
+			
 			memcpy(output, data, EncryptionDataSize);
+			
 			*/
 
 			return false;
@@ -93,5 +117,8 @@ namespace HYJ
 
 
 		}
+
+		static const char* StringXOREncrpytionDecryption(const char* str);
+		
 	};
 }

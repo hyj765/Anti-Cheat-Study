@@ -4,7 +4,7 @@
 namespace HYJ
 {
 
-	bool FunctionHook::SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff = nullptr) 
+	bool FunctionHook::SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff) 
 	{
 		unsigned char HookCode[12] = { 0x48, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xE0 };
 		
