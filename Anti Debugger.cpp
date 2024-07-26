@@ -6,7 +6,21 @@
 
 namespace HYJ
 {
+	AntiDebugger::AntiDebugger()
+	{
+
+		HMODULE ntModule = GetModuleHandleA("ntdll.dll");
+	//	HMODULE kernelModule = GetModuleHandleA("kernel32.dll");
 	
+		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
+		//pIsDebuggerPresent = reinterpret_cast<WinAPITypeList::isDebuggerPresentType>(GetProcAddress(kernelModule, "IsDebuggerPresent"));
+	
+	}
+
+	AntiDebugger::~AntiDebugger() {}
+
+
+
 
 	bool AntiDebugger::isProcessDebugged() noexcept
 	{
@@ -16,16 +30,13 @@ namespace HYJ
 	bool AntiDebugger::CheckDebugPort() noexcept
 	{
 		DWORD dwProcessDebugPort, dwReturned;
-
-		int status =NtQueryInformationProcess(GetCurrentProcess(), ProcessDebugPort, &dwProcessDebugPort, sizeof(DWORD), &dwReturned);
-
-		/*
+	
 		NTSTATUS status = NtQueryInformationProcess(GetCurrentProcess(),
 			ProcessDebugPort, 
 			&dwProcessDebugPort,
 			sizeof(DWORD),
 			&dwReturned);
-		*/
+		
 		if (status >= 0 )
 		{
 			if (dwProcessDebugPort == -1)
@@ -138,19 +149,35 @@ namespace HYJ
 
 	}
 
-
-
-
-	AntiDebugger::AntiDebugger()
+	bool AntiDebugger::CheckIsDebuggerPresentModified() noexcept
 	{
+
 		
-		HMODULE ntModule=GetModuleHandleA("ntdll.dll");
-		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
+
+
+		return true;
 
 	}
-	
 
 
+	/*
+	bool __declspec(naked) AntiDebugger::CheckDebuggerWithINT3()
+	{
+
+		__try
+		{
+
+			__asm int 3;
+			return true;
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			return false;
+		}
+
+
+	}
+	*/
 
 
 

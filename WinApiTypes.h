@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 
 namespace HYJ
 {
@@ -127,13 +128,12 @@ namespace HYJ
 	struct WinAPITypeList
 	{
 		typedef void (__fastcall* BaseThreadInitThunkType)(DWORD, LPTHREAD_START_ROUTINE, LPVOID);
-		typedef NTSTATUS(NTAPI* pNtqueryInformationProcess)(
-			HANDLE ProcessHandle, 
-			PROCESSINFOCLASS ProcessInformationClass,
-			PVOID ProcessInformation, 
-			ULONG ProcessInformationLength, 
-			PULONG  ReturnLength);
-	};
+		typedef NTSTATUS(NTAPI* pNtqueryInformationProcess)(HANDLE ProcessHandle, PROCESSINFOCLASS ProcessInformationClass,PVOID ProcessInformation, ULONG ProcessInformationLength, PULONG  ReturnLength);
+        typedef BOOL(WINAPI* isDebuggerPresentType)();
+        typedef HMODULE(WINAPI* LoadLibraryAType)(LPCSTR lpLibFileName);
+        typedef HMODULE(WINAPI* LoadLibraryWType)(LPCWSTR lpLibFileName);
+
+    };
 
 
 

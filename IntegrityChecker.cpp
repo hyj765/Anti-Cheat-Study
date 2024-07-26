@@ -5,8 +5,6 @@
 namespace HYJ
 {
 
-
-	
 	char* IntegrityChecker::GetSectionHash() noexcept
 	{
 		

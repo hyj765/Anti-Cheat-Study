@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
-#include "WinApiTypes.h"
 
 namespace HYJ
 {	
@@ -26,6 +25,9 @@ namespace HYJ
 
 	public:
 
+        AntiDebugger();
+        ~AntiDebugger();
+
         bool CheckParentIsDebugger();
 
 		bool isProcessDebugged() noexcept;
@@ -39,20 +41,19 @@ namespace HYJ
         bool CheckProcessHeapFlags() noexcept;
         
         bool CheckHardWareCheckPoint() noexcept;
+
+        bool CheckIsDebuggerPresentModified() noexcept;
+
+       // bool __declspec(naked) CheckDebuggerWithINT3();
         
         template<typename FUNCTION, typename... ARGS>
         static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);
 
 	private:
-		AntiDebugger();
 
         WinAPITypeList::pNtqueryInformationProcess NtQueryInformationProcess;
-
-	//	struct WinAPIList winApis;
-	//	struct WinModuleList winModules;
-        
-
-	};
+        //WinAPITypeList::isDebuggerPresentType pIsDebuggerPresent;
+    };
 
     
     template<typename FUNCTION, typename... ARGS>

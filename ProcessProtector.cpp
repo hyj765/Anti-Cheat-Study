@@ -3,13 +3,14 @@
 #include "FunctionHook.h"
 #include <TlHelp32.h>
 #include "ThreadManager.h"
+#include "AntiDllInjector.h"
 
 namespace HYJ
 {
 	unsigned char ProcessProtector::originalThreadThunkBytes[12] = { 0 };
 	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
-	ProcessProtector::ProcessProtector() : mainThreadId(GetCurrentThreadId())
+	ProcessProtector::ProcessProtector() : mainThreadId(GetCurrentThreadId()), hookManager(std::make_unique<FunctionHook>()), antiDebugger(std::make_unique<AntiDebugger>())
 	{
 		InitializeCriticalSection(&criticalSection);
 	};
@@ -29,10 +30,10 @@ namespace HYJ
 		}
 
 		HMODULE kernel32Handle =LoadLibraryA("kernel32.dll");
-		void* address = GetProcAddress(kernel32Handle, "LoadLibarayA");
+		void* address = GetProcAddress(kernel32Handle, "LoadLibraryA");
+		
+		FunctionHook::SetHook(address,functionAddress,DllInjectionChecker::LoadLibraryA_originalCode);
 	
-		hookmanager->SetHook(address, functionAddress);
-
 		return true;
 	}
 
@@ -43,7 +44,7 @@ namespace HYJ
 		
 		threadNumber = GetCurrentThreadId();
 
-		if ( hookmanager->FunctionBlock(address, threadNumber))
+		if ( hookManager->FunctionBlock(address, threadNumber))
 		{
 			status = true;
 		}
@@ -61,7 +62,7 @@ namespace HYJ
 		EnterCriticalSection(&criticalSection);
 		threadNumber = GetCurrentThreadId();
 		
-		if (hookmanager->FunctionUnBlock(address, threadNumber))
+		if (hookManager->FunctionUnBlock(address, threadNumber))
 		{
 			status = true;
 		}
@@ -90,6 +91,7 @@ namespace HYJ
 		FunctionHook::UnHook(functionAddress,originalThreadThunkBytes);
 		functionAddress(LdrReserved, lpStartAddress, lpParameter);
 		FunctionHook::SetHook(functionAddress,RegistThreadFilterFunction);
+		
 	}
 
 	bool ProcessProtector::AntiDllinjection()
@@ -101,7 +103,11 @@ namespace HYJ
 		}
 
 		functionAddress = reinterpret_cast<WinAPITypeList::BaseThreadInitThunkType>(GetProcAddress(kernel32, "BaseThreadInitThunk"));
-		
+		if (functionAddress == 0)
+		{
+			return false;
+		}
+
 		if (FunctionHook::SetHook(functionAddress, RegistThreadFilterFunction, originalThreadThunkBytes) == false)
 		{
 			return false;
@@ -149,5 +155,8 @@ namespace HYJ
 
 		return false;
 	}
+
+	
+
 
 }

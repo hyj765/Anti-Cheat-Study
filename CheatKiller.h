@@ -1,10 +1,4 @@
-#include<iostream>
-#include<Windows.h>
-#include<map>
-#include<vector>
-#include<mutex>
-#include<tuple>
-#include<functional>
+
 
 namespace HYJ
 {
@@ -51,18 +45,6 @@ namespace HYJ
 
 	};
 	*/
-	
-
-	
-	class ProcessProtect
-	{
-	
-	public:
-
-
-	private:
-		
-	};
 	
 
 }
