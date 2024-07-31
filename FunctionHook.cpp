@@ -29,6 +29,8 @@ namespace HYJ
 		{
 			return false;
 		}
+
+		return true;
 	}
 
 	bool FunctionHook::UnHook(void* targetFunctionAddress, unsigned char* originalBytes) 
@@ -46,6 +48,7 @@ namespace HYJ
 			return false;
 		}
 
+		return true;
 	}
 
 	bool FunctionHook::FunctionBlock(void* address, int threadNumber)

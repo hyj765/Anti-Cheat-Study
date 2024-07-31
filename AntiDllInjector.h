@@ -12,14 +12,13 @@ namespace HYJ
 
 		bool MemoryInfoMationCheck(LPTHREAD_START_ROUTINE lpStartAddress);
 
-		bool IsCreateRemoteThread(LPTHREAD_START_ROUTINE lpStartAddress);
+		bool CheckLoadModuleList() noexcept;
 
 		bool ImportAddressTableCheck(const char* functionName, const char* moduleName);
 		
 		static void PushWhiteListDllName(std::string dllName) noexcept;
 
 		static bool IsExistInWhiteList(std::string dllName) noexcept;
-
 
 		/*
 			Example Base Function
@@ -31,11 +30,11 @@ namespace HYJ
 		
 		static unsigned char LoadLibraryA_originalCode[12];
 
-	private:
-		
+	private:			
+		const std::vector<std::string> windowsBaseDllList = {"ntdll.dll","kernel32.dll","advapi32.dll","user32.dll","msvcrt.dll","kernelbase.dll","msvcp140d.dll","vcruntime140_1d.dll","vcruntime140d.dll","ucrtbased.dll"};		
 	};
 
-	
+	constexpr int MAX_MODULE_HANDLE = 1024;
 
 
 

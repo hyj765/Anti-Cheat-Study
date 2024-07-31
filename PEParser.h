@@ -25,8 +25,6 @@ namespace HYJ
 		
 		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept;
 	
-		
-
 		PEParser();
 
 	private:
@@ -42,6 +40,7 @@ namespace HYJ
 		IMAGE_OPTIONAL_HEADER* optionalHeader = nullptr;
 		
 		std::vector<IMAGE_SECTION_HEADER*> sectionHeaders;
+
 	};
 
 

@@ -4,22 +4,6 @@
 namespace HYJ
 {	
   
-    /*
-    struct WinAPIList
-    {
-        WinAPITypeList::pNtqueryInformationProcess pNtqueryInfomation;
-    };
-
-    */
-    /*
-	struct WinModuleList
-	{
-		HMODULE hKernel32;
-		HMODULE hNtDll;
-		HMODULE hUser32;
-	};
-    */
-
 	class AntiDebugger
 	{
 

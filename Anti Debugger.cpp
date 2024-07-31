@@ -10,17 +10,13 @@ namespace HYJ
 	{
 
 		HMODULE ntModule = GetModuleHandleA("ntdll.dll");
-	//	HMODULE kernelModule = GetModuleHandleA("kernel32.dll");
-	
-		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
-		//pIsDebuggerPresent = reinterpret_cast<WinAPITypeList::isDebuggerPresentType>(GetProcAddress(kernelModule, "IsDebuggerPresent"));
-	
+		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
 	}
 
-	AntiDebugger::~AntiDebugger() {}
-
-
-
+	AntiDebugger::~AntiDebugger()
+	{
+		
+	}
 
 	bool AntiDebugger::isProcessDebugged() noexcept
 	{
@@ -158,28 +154,5 @@ namespace HYJ
 		return true;
 
 	}
-
-
-	/*
-	bool __declspec(naked) AntiDebugger::CheckDebuggerWithINT3()
-	{
-
-		__try
-		{
-
-			__asm int 3;
-			return true;
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
-			return false;
-		}
-
-
-	}
-	*/
-
-
-
 
 }
