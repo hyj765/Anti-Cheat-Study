@@ -1,8 +1,5 @@
 #pragma once
-#include <Windows.h>
-#include<vector>
-#include<string>
-#include<iostream>
+#include "stdafx.h"
 
 namespace HYJ
 {
@@ -25,6 +22,8 @@ namespace HYJ
 		
 		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept;
 	
+		unsigned char* GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
+
 		PEParser();
 
 	private:

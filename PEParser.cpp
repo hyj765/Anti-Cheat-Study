@@ -1,5 +1,4 @@
 #include "PEParser.h"
-#include <iostream>
 
 namespace HYJ
 {
@@ -156,7 +155,32 @@ namespace HYJ
 		return bytes;
 	}
 
-	
+	unsigned char* PEParser::GetAddressFromImportAddressTable(const char* LibraryName, const char* functionName)
+	{
 
+		IMAGE_DATA_DIRECTORY importDataDirectory = optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+		
+		PIMAGE_IMPORT_DESCRIPTOR importDescriptor = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(static_cast<unsigned char*>(imagebase) + importDataDirectory.VirtualAddress);
+
+		while (importDescriptor->Name != NULL)
+		{
+		 	
+			char* libName= reinterpret_cast<char*>(importDescriptor->Name + static_cast<unsigned char*>(imagebase));
+			
+			if (strcmp(Util::ConvertToLowerCaseString(libName).c_str(), Util::ConvertToLowerCaseString(LibraryName).c_str()) == 0)
+			{
+
+
+
+				break;
+			}
+
+			importDescriptor++;
+		}
+
+
+		return NULL;
+	}
+	
 
 }

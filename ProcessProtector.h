@@ -42,6 +42,8 @@ namespace HYJ
 		*/
 		bool HookLoadLibrary(void* functionAddress);
 
+		bool HookSetWindowsHook(void* functionAddress);
+
 		bool BlockFunction(void* Address);
 		/*
 			this function restore to blocking function's assembly code 
@@ -50,6 +52,7 @@ namespace HYJ
 		// even this two function's are using critical section but it take a lot of cost
 
 	private:
+
 		ProcessProtector();
 
 		~ProcessProtector();

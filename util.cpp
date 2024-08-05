@@ -120,4 +120,49 @@ namespace HYJ
 
 	}
 
+	unsigned int GetFunctionSize(const void* address)	
+	{
+		const unsigned char* functionAddress = static_cast<const unsigned char*>(address);
+		
+		unsigned int functionSize = 0;
+
+		do
+		{
+
+
+
+		}while( *(functionAddress++) != 0x3C);
+
+
+		return 0ULL;
+	}
+
+	std::string Util::ConvertToLowerCaseString(std::string str) noexcept
+	{
+		std::string lowerCaseString;
+		lowerCaseString.reserve(str.size());
+
+		for (char ch : str)
+		{
+			lowerCaseString.push_back(tolower(ch));
+		}
+
+		return lowerCaseString;
+	}
+
+	std::string Util::ConvertToUpperCaseString(std::string str) noexcept
+	{
+
+		std::string lowerCaseString;
+		lowerCaseString.reserve(str.size());
+
+		for (char ch : str)
+		{
+			lowerCaseString.push_back(toupper(ch));
+		}
+
+		return lowerCaseString;
+
+	}
+
 }

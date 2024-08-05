@@ -31,9 +31,6 @@ namespace HYJ
 			return instance;
 		}
 
-		template<typename T, typename Function, typename... Args>
-		T CreateTaskAsync(Function&& func, Args&&... args);
-
 		template <typename Function, typename... Args>
 		DWORD CreateThreads(Function&& func, bool WaitFlag,Args&&... args);
 

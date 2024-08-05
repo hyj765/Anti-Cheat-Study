@@ -18,9 +18,11 @@ namespace HYJ
 		
 		bool CompareFunctionIntegrity() noexcept;
 		
-		bool DllIntegrity() noexcept;
+		bool GetDllIntegrity() noexcept;
 
-		
+		static bool FunctionIsHooked(void* address) noexcept;
+
+		static bool CheckIATAddress(void* address) noexcept;
 
 	private:
 		IntegrityChecker();

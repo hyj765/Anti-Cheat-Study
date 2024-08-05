@@ -29,7 +29,7 @@ namespace HYJ
 		static std::set<std::string> WhiteList;
 		
 		static unsigned char LoadLibraryA_originalCode[12];
-
+		
 	private:			
 		const std::vector<std::string> windowsBaseDllList = {"ntdll.dll","kernel32.dll","advapi32.dll","user32.dll","msvcrt.dll","kernelbase.dll","msvcp140d.dll","vcruntime140_1d.dll","vcruntime140d.dll","ucrtbased.dll"};		
 	};
