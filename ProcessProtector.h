@@ -18,6 +18,7 @@ namespace HYJ
 			anti debugger
 			integrity check
 			multi process check
+			Anti Macro
 
 		*/
 		static ProcessProtector& GetInstance() noexcept

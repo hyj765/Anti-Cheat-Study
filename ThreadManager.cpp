@@ -18,8 +18,6 @@ namespace HYJ
 		return std::make_pair(hThread, threadId);
 	}
 
-
-
 	ThreadManager::~ThreadManager()
 	{
 		std::vector<HANDLE> handles;
@@ -105,7 +103,25 @@ namespace HYJ
 		return threadInfo.second;
 	}
 
+	bool ThreadManager::TerminateThreadByHandle(HANDLE hThread)
+	{
+		if (hThread == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
 
+		return TerminateThread(hThread,0);
+	}
 
+	bool ThreadManager::TerminateThreadByThreadId(DWORD threadId)
+	{
+		HANDLE hThread = NULL;
+		if ((hThread = FindHandleByThreadId(threadId)) == NULL)
+		{
+			return false;
+		}
+		
+		return TerminateThreadByHandle(hThread);
+	}
 
 }

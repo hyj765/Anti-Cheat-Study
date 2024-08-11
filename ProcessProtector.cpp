@@ -1,5 +1,5 @@
 #include"ProcessProtector.h"
-#include "Anti Debugger.h"
+#include "AntiDebugger.h"
 #include "FunctionHook.h"
 #include <TlHelp32.h>
 #include "ThreadManager.h"

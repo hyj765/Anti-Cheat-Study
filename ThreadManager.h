@@ -38,6 +38,10 @@ namespace HYJ
 		
 		void NotificationThreadExit(int threadId) noexcept;
 	
+		bool TerminateThreadByHandle(HANDLE hThread);
+
+		bool TerminateThreadByThreadId(DWORD threadId);
+
 		inline void InsertTaskList(DWORD threadId, HANDLE threadHandle) noexcept { taskLists.emplace_back(std::make_pair(threadId, threadHandle)); }
 
 		inline HANDLE FindHandleByThreadId(DWORD threadId)
@@ -87,10 +91,5 @@ namespace HYJ
 		
 		ThreadManager& operator=(ThreadManager&&) = delete;
 	};
-
-
-
-	
-
 
 }

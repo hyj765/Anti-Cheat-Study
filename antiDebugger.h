@@ -1,56 +1,57 @@
-#include<Windows.h>
+#pragma once
+#include "stdafx.h"
 
 namespace HYJ
-{
+{	
+  
 	class AntiDebugger
 	{
+
+	public:
+
+        AntiDebugger();
+        ~AntiDebugger();
+
+        bool CheckParentIsDebugger();
+
+		bool isProcessDebugged() noexcept;
 		
+        bool CheckDebugPort() noexcept;
+        
+        bool CheckDebugFlags()noexcept;
+        
+        bool CheckDebugObjectHandle()noexcept;
+        
+        bool CheckProcessHeapFlags() noexcept;
+        
+        bool CheckHardWareCheckPoint() noexcept;
 
-		inline static AntiDebugger& getInstance()
-		{
-			static AntiDebugger instance;
-			return instance;
-		}
+        bool CheckIsDebuggerPresentModified() noexcept;
 
-		inline bool IsTargetProcessHandleExist() { return (targetProcessHandle != NULL); }
-		
-		inline bool GetTargetProcessHandle(int pid) noexcept
-		{
-			targetProcessHandle= OpenProcess(PROCESS_VM_READ, NULL, pid);
-			return IsTargetProcessHandleExist();
-		}
-		inline bool CheckTargetProcessIsDebugged()
-		{
-			if (IsTargetProcessHandleExist() == false)
-			{
-				return false;
-			}
-
-			if (CheckRemoteDebuggerPresent(targetProcessHandle, &targetIsDebugged))
-			{
-				return targetIsDebugged;
-			}
-			
-			return false;
-		}
-		inline bool CurrentProcessIsDebugged() noexcept
-		{
-			return IsDebuggerPresent();
-		}
-
-
+       // bool __declspec(naked) CheckDebuggerWithINT3();
+        
+        template<typename FUNCTION, typename... ARGS>
+        static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);
 
 	private:
-		AntiDebugger() {}
-		AntiDebugger(AntiDebugger& ref) = delete;
-		AntiDebugger(AntiDebugger&& ref) = delete;
-		AntiDebugger& operator=(AntiDebugger&& ref) = delete;
-		AntiDebugger& operator=(const AntiDebugger& ref) = delete;
-		~AntiDebugger() {}
-		BOOL targetIsDebugged = false;
-		HANDLE targetProcessHandle = NULL;
-	};
 
+        WinAPITypeList::pNtqueryInformationProcess NtQueryInformationProcess;
+        //WinAPITypeList::isDebuggerPresentType pIsDebuggerPresent;
+        
+    };
 
+    
+    template<typename FUNCTION, typename... ARGS>
+    bool AntiDebugger::CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args) 
+    {
+        DWORD startTime = GetTickCount();
+        
+        std::invoke(function, std::forward<ARGS>(args)...);
+        DWORD proceedingTime = GetTickCount() - startTime;
 
+        return (proceedingTime > LimiteProceedingTime);
+    }
+    
+
+    
 }
