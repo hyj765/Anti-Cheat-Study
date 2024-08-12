@@ -1,127 +1,46 @@
 #include "ThreadManager.h"
-#include <functional>
-#include <vector>
-#include <thread>
-#include <future>
-#include <random>
+
 
 namespace HYJ
 {
 
-	template <typename Function, typename... Args>
-	std::pair<HANDLE, DWORD> Task<Function, Args...>::runThread()
-	{
-
-		DWORD threadId = 0;
-		HANDLE hThread = CreateThread(nullptr, 0, ThreadProc, static_cast<void*>(this), 0, &threadId);
-
-		return std::make_pair(hThread, threadId);
-	}
+	
 
 	ThreadManager::~ThreadManager()
 	{
-		std::vector<HANDLE> handles;
-
-		for (std::pair<int,HANDLE> task:taskLists)
+	
+		for (int i = 0; i < tasks.size(); ++i)
 		{
-			handles.push_back(task.second);
+			tasks[i].get()->join();
 		}
 
-		if (!handles.empty())
-		{
-			WaitForMultipleObjects(handles.size(), handles.data(), TRUE, INFINITE);
-		}
+		tasks.clear();
 
-		for (HANDLE handle : handles)
-		{
-			CloseHandle(handle);
-		}
 	}
-
-	bool ThreadManager::IsThreadCreateByThreadManager(int threadId)
+	
+	bool ThreadManager::IsThreadCreateByThreadManager(std::thread::id threadId)
 	{
-		if (taskLists.size() == 0)
+		if (tasks.size() == 0)
 		{
 			return false;
 		}
 		
-		for (int i = 0; i < taskLists.size(); ++i)
+		for (int i = 0; i < tasks.size(); ++i)
 		{
-			if (threadId == taskLists[i].first)
+			if (threadId == tasks[i].get()->get_id())
 			{
 				return true;
 			}
-
 		}
 
 		return false;
 	}
 
-	void ThreadManager::NotificationThreadExit(int threadId) noexcept
+	void ThreadManager::ThreadNotification(std::thread::id threadId)
 	{
-		std::lock_guard<std::mutex> lock(mtx);
-		auto hThread = FindHandleByThreadId(threadId);
-		CloseHandle(hThread);
+		EraseTask(threadId);
 	}
 
 
-	template <typename Function, typename... Args>
-	DWORD WINAPI Task<Function, Args...>::ThreadProc(LPVOID lpParameter)
-	{
-		Task* self = static_cast<Task*>(lpParameter);
-		std::apply(self->f, self->arguments);
-
-		ThreadManager::getInstance().NotificationThreadExit(GetCurrentThreadId());
-
-		return 0;
-	}
-
-	template <typename Function, typename... Args>
-	DWORD ThreadManager::CreateThreads(Function&& func, bool WaitFlag, Args&&... args)
-	{
-		HANDLE threadHandle = NULL;
-
-		DWORD threadId = 0;
-
-
-		auto task = Task(func, args...);
-		std::pair<HANDLE, DWORD> threadInfo = task.runThread();
-
-		if (threadInfo.second == 0 || threadInfo.first == INVALID_HANDLE_VALUE)
-		{
-			return -1;
-		}
-
-
-		InsertTaskList(threadInfo.second, threadInfo.first);
-
-		if (WaitFlag)
-		{
-			WaitForSingleObject(threadInfo.first, INFINITE);
-		}
-
-		return threadInfo.second;
-	}
-
-	bool ThreadManager::TerminateThreadByHandle(HANDLE hThread)
-	{
-		if (hThread == INVALID_HANDLE_VALUE)
-		{
-			return false;
-		}
-
-		return TerminateThread(hThread,0);
-	}
-
-	bool ThreadManager::TerminateThreadByThreadId(DWORD threadId)
-	{
-		HANDLE hThread = NULL;
-		if ((hThread = FindHandleByThreadId(threadId)) == NULL)
-		{
-			return false;
-		}
-		
-		return TerminateThreadByHandle(hThread);
-	}
 
 }

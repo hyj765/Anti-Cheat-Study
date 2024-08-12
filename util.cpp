@@ -1,7 +1,5 @@
 #pragma once
 #include "util.h"
-#include<iostream>
-#include<Windows.h>
 
 
 namespace HYJ

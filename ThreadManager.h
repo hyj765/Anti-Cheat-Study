@@ -1,85 +1,84 @@
 #pragma once
 #include"stdafx.h"
 #include<mutex>
-#include<map>
-#include<tuple>
+#include<atomic>
+
 
 namespace HYJ
 {
-
 	template <typename Function, typename... Args>
 	class Task
 	{
 	public:
-		Task(Function fn, Args... s) : f(fn), arguments(s...) {};
-		std::pair<HANDLE, DWORD> runThread();
-
+		Task(Function fn, Args... s) : f(fn), arguments(std::forward<Args>(s)...) {};
+		
+		void operator()() const
+		{
+			std::apply(f, arguments);
+		}
 	private:
-		static DWORD WINAPI ThreadProc(LPVOID lpParameter);
 		Function f;
 		std::tuple<Args...> arguments;
-
 	};
 
 
 	class ThreadManager
 	{
 	public:
-		static ThreadManager& getInstance() noexcept
+		static ThreadManager& GetInstance() noexcept
 		{
 			static ThreadManager instance;
 			return instance;
 		}
 
 		template <typename Function, typename... Args>
-		DWORD CreateThreads(Function&& func, bool WaitFlag,Args&&... args);
+		std::thread::id CreateThreads(Function function,Args... args);
 
-		bool IsThreadCreateByThreadManager(int threadId);
+		bool IsThreadCreateByThreadManager(std::thread::id threadId);
 		
-		void NotificationThreadExit(int threadId) noexcept;
-	
-		bool TerminateThreadByHandle(HANDLE hThread);
-
-		bool TerminateThreadByThreadId(DWORD threadId);
-
-		inline void InsertTaskList(DWORD threadId, HANDLE threadHandle) noexcept { taskLists.emplace_back(std::make_pair(threadId, threadHandle)); }
-
-		inline HANDLE FindHandleByThreadId(DWORD threadId)
+		inline bool IsThreadJoinAble(std::thread::id threadId)
 		{
-
-
-			for (int i = 0; i < taskLists.size(); ++i)
+			for (int i = 0; i < tasks.size(); ++i)
 			{
-				if (taskLists[i].first == threadId)
+				if (tasks[i].get()->get_id() == threadId)
 				{
-					return taskLists[i].second;
+					if (tasks[i].get()->joinable())
+					{
+						return true;
+					}
+
+					break;
 				}
 			}
 
-			return NULL;
-
+			return false;
 		}
 
-		inline void RemoveHandle(DWORD threadId) noexcept
+		inline void PushTaskList(std::unique_ptr<std::thread> Thread) noexcept
 		{
-			if (taskLists.size() == 0)
-			{
-				return;
-			}
-
-			for (int i = 0; i < taskLists.size(); ++i)
-			{
-				if (taskLists[i].first == threadId)
-				{
-					taskLists.erase(taskLists.begin() + i);
-				}
-			}
+			std::lock_guard lock(mtx);
+			tasks.push_back(move(Thread));
 		}
 
+		inline void EraseTask(std::thread::id threadId)
+		{
+			std::lock_guard lock(mtx);
+			
+			for (int i = 0; i < tasks.size(); ++i)
+			{
+				if (tasks[i].get()->get_id() == threadId)
+				{
+					tasks.erase(tasks.begin() + i);
+				}
+
+			}
+
+		}
+		void ThreadNotification(std::thread::id threadId);
+		
 	private:
 		std::mutex mtx;
-		std::vector<std::pair<DWORD, HANDLE>> taskLists;
-		std::vector<DWORD> asyncTaskList;
+		std::vector<std::unique_ptr<std::thread>> tasks;
 		
 		ThreadManager() = default;
 		
@@ -92,4 +91,16 @@ namespace HYJ
 		ThreadManager& operator=(ThreadManager&&) = delete;
 	};
 
+	template <typename Function, typename... Args>
+	std::thread::id ThreadManager::CreateThreads(Function function, Args... args)
+	{
+		
+		std::unique_ptr<std::thread> th = std::make_unique<std::thread>(Task(function, std::forward<Args>(args)...));
+		std::thread::id threadId = th.get()->get_id();
+		
+		PushTaskList(std::move(th));
+
+		return threadId;
+	}
+	
 }

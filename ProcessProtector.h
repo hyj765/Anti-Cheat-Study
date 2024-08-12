@@ -12,15 +12,7 @@ namespace HYJ
 	class ProcessProtector
 	{
 	public:
-		/*
 		
-			anti dll		
-			anti debugger
-			integrity check
-			multi process check
-			Anti Macro
-
-		*/
 		static ProcessProtector& GetInstance() noexcept
 		{
 			static ProcessProtector instance;
@@ -72,7 +64,7 @@ namespace HYJ
 		
 		int threadNumber = 0;
 		
-		DWORD mainThreadId;
+		std::thread::id mainThreadId;
 		
 		CRITICAL_SECTION criticalSection;
 		

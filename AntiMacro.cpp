@@ -1,5 +1,6 @@
 #include "AntiMacro.h"
 
+
 namespace HYJ {
 
 	LRESULT CALLBACK AntiMacro::AntiKeyBoardMacroHookFunction(int nCode, WPARAM wParam, LPARAM lParam)
@@ -45,17 +46,35 @@ namespace HYJ {
 
 		if ((mouseMonitor = SetWindowsHookExA(WH_MOUSE_LL, AntiMouseMacroHookFunction, NULL, 0)) == nullptr)
 		{
-			DEBUG_LOG("anti Macro", "SetAntiMouseMacro Hook Fail");
+			DEBUG_LOG("Anti Macro", "SetAntiMouseMacro Hook Fail");
 			return false;
 		}
 
 		if ((keyboardMonitor = SetWindowsHookExA(WH_KEYBOARD_LL, AntiKeyBoardMacroHookFunction, NULL, 0)) == nullptr)
 		{
-			DEBUG_LOG("anti Macro", "SetAntiKeyBoardMacro Hook Fail");
+			DEBUG_LOG("Anti Macro", "SetAntiKeyBoardMacro Hook Fail");
 			return false;
 		}
 
+		MSG message;
+		while (GetMessageA(&message, NULL, 0, 0))
+		{
+			TranslateMessage(&message);
+			DispatchMessageA(&message);
+		}
+
 		return true;
+	}
+
+	bool AntiMacro::StartMonitor()
+	{
+		//MonitorThread = ThreadManager::getInstance().CreateThreads(&SetAntiMacroMonitor, false);
+		if (MonitorThread != NULL)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	void AntiMacro::UnSetAntiMacroMonitor()
@@ -78,6 +97,8 @@ namespace HYJ {
 	AntiMacro::~AntiMacro()
 	{
 		UnSetAntiMacroMonitor();
+		//ThreadManager::GetInstance().TerminateThreadByThreadId(MonitorThread);
+		MonitorThread = NULL;
 	}
 
 }

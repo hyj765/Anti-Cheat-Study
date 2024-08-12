@@ -10,7 +10,7 @@ namespace HYJ
 	unsigned char ProcessProtector::originalThreadThunkBytes[12] = { 0 };
 	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
-	ProcessProtector::ProcessProtector() : mainThreadId(GetCurrentThreadId()), hookManager(std::make_unique<FunctionHook>()), antiDebugger(std::make_unique<AntiDebugger>())
+	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id()), hookManager(std::make_unique<FunctionHook>()), antiDebugger(std::make_unique<AntiDebugger>())
 	{
 		InitializeCriticalSection(&criticalSection);
 	};
@@ -22,9 +22,9 @@ namespace HYJ
 
 	bool ProcessProtector::HookLoadLibrary(void* functionAddress)
 	{
-		DWORD threadId = GetCurrentThreadId();
+		std::thread::id threadId = std::this_thread::get_id();
 		
-		if (threadId != mainThreadId && ThreadManager::getInstance().IsThreadCreateByThreadManager(threadId) == false)
+		if (threadId != mainThreadId && ThreadManager::GetInstance().IsThreadCreateByThreadManager(threadId) == false)
 		{
 			return false;
 		}

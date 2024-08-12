@@ -10,7 +10,9 @@ namespace HYJ
 
 		static LRESULT CALLBACK AntiKeyBoardMacroHookFunction(int nCode, WPARAM wParam, LPARAM lParam);
 		static LRESULT CALLBACK AntiMouseMacroHookFunction(int nCode, WPARAM wParam, LPARAM lParam);
+		
 		bool SetAntiMacroMonitor();
+		bool StartMonitor();
 		void UnSetAntiMacroMonitor();
 
 		AntiMacro();
@@ -19,9 +21,7 @@ namespace HYJ
 		static HHOOK keyboardMonitor;
 
 	private:
-
-		HANDLE MonitorThread = NULL;
-
+		DWORD MonitorThread = NULL;
 	};
 	
 	HHOOK AntiMacro::mouseMonitor = nullptr;

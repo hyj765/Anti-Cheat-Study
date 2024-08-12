@@ -5,6 +5,9 @@
 #include<functional>
 #include<map>
 #include<set>
+#include<thread>
+#include<assert.h>
+#include<tuple>
 #include "WinApiTypes.h"
 #include "util.h"
 

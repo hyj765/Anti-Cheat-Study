@@ -2,20 +2,18 @@
 #include "AntiDebugger.h"
 #include <TlHelp32.h>
 #include <psapi.h>
-#include "util.h"
 
 namespace HYJ
 {
 	AntiDebugger::AntiDebugger()
 	{
-		HMODULE ntModule = GetModuleHandleA("ntdll.dll");
-		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
+	
+	HMODULE ntModule = GetModuleHandleA("ntdll.dll");
+	NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
+	
 	}
 
-	AntiDebugger::~AntiDebugger()
-	{
-		
-	}
+	AntiDebugger::~AntiDebugger(){}
 
 	bool AntiDebugger::isProcessDebugged() noexcept
 	{
