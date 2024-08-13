@@ -126,13 +126,11 @@ namespace HYJ
 
 		do
 		{
-
-
-
+			functionSize++;
 		}while( *(functionAddress++) != 0x3C);
 
 
-		return 0ULL;
+		return functionSize;
 	}
 
 	std::string Util::ConvertToLowerCaseString(std::string str) noexcept

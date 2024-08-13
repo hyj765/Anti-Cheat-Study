@@ -6,10 +6,14 @@
 
 namespace HYJ
 {
+	class ThreadManager;
+
 	template <typename Function, typename... Args>
 	class Task
 	{
+
 	public:
+		
 		Task(Function fn, Args... s) : f(fn), arguments(std::forward<Args>(s)...) {};
 		
 		void operator()() const
@@ -59,24 +63,24 @@ namespace HYJ
 			std::lock_guard lock(mtx);
 			tasks.push_back(move(Thread));
 		}
-
-		inline void EraseTask(std::thread::id threadId)
+		
+		inline void RemoveFinishedThreads()
 		{
-			std::lock_guard lock(mtx);
 			
-			for (int i = 0; i < tasks.size(); ++i)
-			{
-				if (tasks[i].get()->get_id() == threadId)
-				{
-					tasks.erase(tasks.begin() + i);
-				}
+			std::lock_guard lock(mtx);
 
-			}
+			auto it = std::remove_if(tasks.begin(), tasks.end(),
+				[](const std::unique_ptr<std::thread>& th) {
+					return th->joinable() == false; 
+				});
+			tasks.erase(it, tasks.end());
 
 		}
+		
 		void ThreadNotification(std::thread::id threadId);
 		
 	private:
+
 		std::mutex mtx;
 		std::vector<std::unique_ptr<std::thread>> tasks;
 		

@@ -8,8 +8,8 @@ namespace HYJ
 	AntiDebugger::AntiDebugger()
 	{
 	
-	HMODULE ntModule = GetModuleHandleA("ntdll.dll");
-	NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
+	//HMODULE ntModule = GetModuleHandleA("ntdll.dll");
+	//NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
 	
 	}
 

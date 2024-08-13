@@ -1,6 +1,5 @@
 #include "AntiMacro.h"
 
-
 namespace HYJ {
 
 	LRESULT CALLBACK AntiMacro::AntiKeyBoardMacroHookFunction(int nCode, WPARAM wParam, LPARAM lParam)
@@ -66,15 +65,9 @@ namespace HYJ {
 		return true;
 	}
 
-	bool AntiMacro::StartMonitor()
+	void AntiMacro::StartMonitor()
 	{
-		//MonitorThread = ThreadManager::getInstance().CreateThreads(&SetAntiMacroMonitor, false);
-		if (MonitorThread != NULL)
-		{
-			return true;
-		}
-
-		return false;
+		monitorThread = ThreadManager::GetInstance().CreateThreads(SetAntiMacroMonitor);
 	}
 
 	void AntiMacro::UnSetAntiMacroMonitor()
@@ -97,8 +90,6 @@ namespace HYJ {
 	AntiMacro::~AntiMacro()
 	{
 		UnSetAntiMacroMonitor();
-		//ThreadManager::GetInstance().TerminateThreadByThreadId(MonitorThread);
-		MonitorThread = NULL;
 	}
 
 }

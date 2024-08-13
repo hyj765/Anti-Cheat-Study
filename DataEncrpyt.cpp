@@ -2,7 +2,7 @@
 
 namespace HYJ
 {
-	const std::string DataEncrpyt::StringXOREncrpytionDecryption(const std::string& str, char* key) noexcept
+	const std::string DataEncrypt::StringXOREncrpytionDecryption(const std::string& str, char* key) noexcept
 	{
 
 		std::string buffer;
@@ -16,5 +16,40 @@ namespace HYJ
 
 		return buffer;
 	}
+
+	void DataEncrypt::AddPaddingToBlockSize(std::vector<BYTE>& data, size_t blockSize)
+	{
+		size_t paddingRequired = (blockSize - (data.size() % blockSize)) % blockSize;
+		if (paddingRequired > 0) {
+			data.insert(data.end(), paddingRequired, 0);
+		}
+	}
+
+	bool DataEncrypt::DataEnCryption(std::vector<unsigned char>& data, size_t size)
+	{
+		if (!CryptProtectMemory(data.data(),data.size(),CRYPTPROTECTMEMORY_SAME_PROCESS))
+		{
+			DEBUG_LOG("dataEncryption", "encrpytion fail");
+			return false;
+		}
+
+		return true;
+	}
+
+	bool DataEncrypt::DataDeCryption(std::vector<unsigned char>& data, size_t dataSize)
+	{
+		if (!CryptUnprotectMemory(data.data(), data.size(), CRYPTPROTECTMEMORY_SAME_PROCESS))
+		{
+			DEBUG_LOG("dataEncryption", "dataDecryption Fail");
+			return false;
+		}
+
+		data.resize(dataSize);
+
+		return true;
+	}
+
+	
+
 
 }

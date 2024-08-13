@@ -7,9 +7,10 @@ namespace HYJ
 	class AntiDebugger
 	{
 
-	public:
+	    public:
 
         AntiDebugger();
+
         ~AntiDebugger();
 
         bool CheckParentIsDebugger();
@@ -44,6 +45,7 @@ namespace HYJ
     template<typename FUNCTION, typename... ARGS>
     bool AntiDebugger::CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args) 
     {
+        
         DWORD startTime = GetTickCount();
         
         std::invoke(function, std::forward<ARGS>(args)...);

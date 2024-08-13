@@ -38,7 +38,7 @@ namespace HYJ
 
 	void ThreadManager::ThreadNotification(std::thread::id threadId)
 	{
-		EraseTask(threadId);
+		//EraseTask(threadId);
 	}
 
 

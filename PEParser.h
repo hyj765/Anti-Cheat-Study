@@ -22,7 +22,7 @@ namespace HYJ
 		
 		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept;
 	
-		unsigned char* GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
+		unsigned long GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
 
 		PEParser();
 

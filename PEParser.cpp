@@ -155,9 +155,9 @@ namespace HYJ
 		return bytes;
 	}
 
-	unsigned char* PEParser::GetAddressFromImportAddressTable(const char* LibraryName, const char* functionName)
+	unsigned long PEParser::GetAddressFromImportAddressTable(const char* LibraryName, const char* functionName)
 	{
-
+		
 		IMAGE_DATA_DIRECTORY importDataDirectory = optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
 		
 		PIMAGE_IMPORT_DESCRIPTOR importDescriptor = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(static_cast<unsigned char*>(imagebase) + importDataDirectory.VirtualAddress);
@@ -169,9 +169,21 @@ namespace HYJ
 			
 			if (strcmp(Util::ConvertToLowerCaseString(libName).c_str(), Util::ConvertToLowerCaseString(LibraryName).c_str()) == 0)
 			{
+				PIMAGE_THUNK_DATA originalFirstThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(static_cast<unsigned char*>(imagebase) + importDescriptor->OriginalFirstThunk);
+				PIMAGE_THUNK_DATA firstThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(static_cast<unsigned char*>(imagebase) + importDescriptor->FirstThunk);
+				while (originalFirstThunk->u1.AddressOfData != NULL)
+				{
+					PIMAGE_IMPORT_BY_NAME curfunctionName = reinterpret_cast<PIMAGE_IMPORT_BY_NAME>(static_cast<unsigned char*>(imagebase) + originalFirstThunk->u1.AddressOfData);
+					
+					if (strcmp(Util::ConvertToLowerCaseString(curfunctionName->Name).c_str(), Util::ConvertToLowerCaseString(functionName).c_str()) == 0)
+					{
+						
+						return firstThunk->u1.Function;
+					}
 
-
-
+					firstThunk++;
+					originalFirstThunk++;
+				}
 				break;
 			}
 
