@@ -36,11 +36,5 @@ namespace HYJ
 		return false;
 	}
 
-	void ThreadManager::ThreadNotification(std::thread::id threadId)
-	{
-		//EraseTask(threadId);
-	}
-
-
 
 }

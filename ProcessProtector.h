@@ -3,8 +3,13 @@
 
 namespace HYJ
 {
+	
 	class FunctionHook;
 	class AntiDebugger;
+	class AntiMacro;
+	class DataEncrypt;
+	class AntiDllInjector;
+
 	/*
 		ProcessProtector class include each Classes Anti Dll, Anti Debugger, Integrity Check class
 

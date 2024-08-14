@@ -1,5 +1,6 @@
 #pragma once
 #include "util.h"
+#include "SHA256.h"
 
 
 namespace HYJ
@@ -100,25 +101,12 @@ namespace HYJ
 		return buffer;
 	}
 
-	unsigned char* Util::GetSha256(const unsigned char* data)
+	unsigned char* Util::GetSha256(const unsigned char* data, size_t size)
 	{
-		//unsigned char hash[SHA256_DIGEST_LENGTH] = { 0 };
-		
-		//SHA256(data, sizeof(data), hash);
-
-		return nullptr;
+		return SHA256::CalculateSha256(data, size);
 	}
 
-	unsigned char* Util::GetCrc32(const char* data)
-	{
-
-		
-
-		return nullptr;
-
-	}
-
-	unsigned int GetFunctionSize(const void* address)	
+	unsigned int Util::GetFunctionSize(const void* address)	
 	{
 		const unsigned char* functionAddress = static_cast<const unsigned char*>(address);
 		

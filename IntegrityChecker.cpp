@@ -5,6 +5,8 @@
 namespace HYJ
 {
 
+	IntegrityChecker::~IntegrityChecker(){}
+
 	char* IntegrityChecker::GetSectionHash() noexcept
 	{
 		
@@ -20,7 +22,7 @@ namespace HYJ
 			return nullptr;
 		}
 
-		unsigned char* hash =Util::GetSha256(fileData.get());
+		unsigned char* hash =Util::GetSha256(fileData.get(),sizeof(fileData.get()));
 
 		return hash;
 	}

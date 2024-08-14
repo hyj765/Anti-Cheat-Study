@@ -64,21 +64,6 @@ namespace HYJ
 			tasks.push_back(move(Thread));
 		}
 		
-		inline void RemoveFinishedThreads()
-		{
-			
-			std::lock_guard lock(mtx);
-
-			auto it = std::remove_if(tasks.begin(), tasks.end(),
-				[](const std::unique_ptr<std::thread>& th) {
-					return th->joinable() == false; 
-				});
-			tasks.erase(it, tasks.end());
-
-		}
-		
-		void ThreadNotification(std::thread::id threadId);
-		
 	private:
 
 		std::mutex mtx;
