@@ -12,14 +12,11 @@ namespace HYJ
 		
 		static bool UnHook(void* targetFunctionAddress, unsigned char* originalBytes);
 		
-		bool FunctionBlock(void* address, int threadNumber);
+		static bool FunctionBlock(void* address, int threadNumber);
 		
-		bool FunctionUnBlock(void* address,int threadNumber);
+		static bool FunctionUnBlock(void* address,int threadNumber);
 	
-	private:
-		
-		std::map<void*, unsigned char> originalCode;
-
+		static std::map<void*, unsigned char> originalCode;		
 	};
 
 }

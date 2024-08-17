@@ -2,6 +2,7 @@
 #include "AntiDebugger.h"
 #include <TlHelp32.h>
 #include <psapi.h>
+#include "FunctionHook.h"
 
 namespace HYJ
 {
@@ -10,7 +11,7 @@ namespace HYJ
 	
 		HMODULE ntModule = GetModuleHandleA("ntdll.dll");
 		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
-	
+		
 	}
 
 	AntiDebugger::~AntiDebugger(){}
@@ -152,6 +153,28 @@ namespace HYJ
 
 	}
 
+	bool AntiDebugger::BlockDbgBreakPoint() noexcept
+	{
+		HMODULE ntdllHandle=GetModuleHandleA("ntdll.dll");
+		if (ntdllHandle == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+
+		FARPROC dbgBreakPoint = GetProcAddress(ntdllHandle, "DbgBreakPoint");
+		if (dbgBreakPoint == nullptr)
+		{
+			return false;
+		}
+
+		int currentThreadId = GetCurrentThreadId();
+		if (FunctionHook::FunctionBlock(dbgBreakPoint, currentThreadId) == false)
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 
 }

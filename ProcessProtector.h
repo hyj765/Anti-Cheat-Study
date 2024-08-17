@@ -79,6 +79,7 @@ namespace HYJ
 
 		static unsigned char originalThreadThunkBytes[12];
 
+
 	};
 
 

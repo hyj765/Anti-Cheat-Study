@@ -29,7 +29,7 @@ namespace HYJ
 
         bool CheckIsDebuggerPresentModified() noexcept;
 
-       // bool __declspec(naked) CheckDebuggerWithINT3();
+        bool BlockDbgBreakPoint() noexcept;
         
         template<typename FUNCTION, typename... ARGS>
         static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);

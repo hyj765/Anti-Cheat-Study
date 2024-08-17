@@ -3,6 +3,7 @@
 
 namespace HYJ
 {
+	std::map<void*,unsigned char> FunctionHook::originalCode;
 
 	bool FunctionHook::SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff) 
 	{
@@ -95,6 +96,7 @@ namespace HYJ
 		}
 	
 		unsigned char originalBytes = originalCode[address];
+
 		memcpy(address, &originalBytes, 1);
 
 		if (!VirtualProtect(address, 1, oldProtect, &oldProtect))
