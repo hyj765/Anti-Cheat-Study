@@ -124,7 +124,26 @@ namespace HYJ
         ProcessFindFirstThreadByTebValue, // PROCESS_TEB_VALUE_INFORMATION
         MaxProcessInfoClass
     } PROCESSINFOCLASS;
-
+    typedef enum _THREAD_INFORMATION_CLASS {
+        ThreadBasicInformation,
+        ThreadTimes,
+        ThreadPriority,
+        ThreadBasePriority,
+        ThreadAffinityMask,
+        ThreadImpersonationToken,
+        ThreadDescriptorTableEntry,
+        ThreadEnableAlignmentFaultFixup,
+        ThreadEventPair,
+        ThreadQuerySetWin32StartAddress,
+        ThreadZeroTlsCell,
+        ThreadPerformanceCount,
+        ThreadAmILastThread,
+        ThreadIdealProcessor,
+        ThreadPriorityBoost,
+        ThreadSetTlsArrayAddress,
+        ThreadIsIoPending,
+        ThreadHideFromDebugger
+    } THREAD_INFORMATION_CLASS, * PTHREAD_INFORMATION_CLASS;
 	struct WinAPITypeList
 	{
 		typedef void (__fastcall* BaseThreadInitThunkType)(DWORD, LPTHREAD_START_ROUTINE, LPVOID);
@@ -132,7 +151,7 @@ namespace HYJ
         typedef BOOL(WINAPI* isDebuggerPresentType)();
         typedef HMODULE(WINAPI* LoadLibraryAType)(LPCSTR lpLibFileName);
         typedef HMODULE(WINAPI* LoadLibraryWType)(LPCWSTR lpLibFileName);
-
+        typedef NTSTATUS(NTAPI* NTSetInformationThread)(HANDLE threadHandle, THREAD_INFORMATION_CLASS threadInformationclass, PVOID threadInfomation, ULONG threadInformationLength);
     };
 
 

@@ -101,7 +101,7 @@ namespace HYJ
 		return buffer;
 	}
 
-	unsigned char* Util::GetSha256(const unsigned char* data, size_t size)
+	std::unique_ptr<unsigned char[]> Util::GetSha256(const unsigned char* data, size_t size)
 	{
 		return SHA256::CalculateSha256(data, size);
 	}

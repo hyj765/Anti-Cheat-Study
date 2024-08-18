@@ -14,7 +14,7 @@ namespace HYJ
 		
 		static std::unique_ptr<unsigned char[]> GetReadFileAsync(const char* fileName,DWORD bufferSize = 4096);
 		
-		static unsigned char* GetSha256(const unsigned char* data, size_t size);
+		static std::unique_ptr<unsigned char[]> GetSha256(const unsigned char* data, size_t size);
 
 		static unsigned int GetFunctionSize(const void* address);
 

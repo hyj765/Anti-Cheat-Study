@@ -30,6 +30,8 @@ namespace HYJ
         bool CheckIsDebuggerPresentModified() noexcept;
 
         bool BlockDbgBreakPoint() noexcept;
+
+        bool BlockDebuggerAttach() noexcept;
         
         template<typename FUNCTION, typename... ARGS>
         static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);
@@ -38,7 +40,6 @@ namespace HYJ
 
         WinAPITypeList::pNtqueryInformationProcess NtQueryInformationProcess;
         //WinAPITypeList::isDebuggerPresentType pIsDebuggerPresent;
-        
     };
 
     

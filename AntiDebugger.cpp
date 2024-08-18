@@ -1,8 +1,8 @@
 #pragma once
 #include "AntiDebugger.h"
+#include "FunctionHook.h"
 #include <TlHelp32.h>
 #include <psapi.h>
-#include "FunctionHook.h"
 
 namespace HYJ
 {
@@ -120,7 +120,6 @@ namespace HYJ
 		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
 		if (hProcess == NULL)
 		{
-			CloseHandle(hProcess);
 			return false;
 		}
 
@@ -176,5 +175,27 @@ namespace HYJ
 		return true;
 	}
 
+	bool AntiDebugger::BlockDebuggerAttach() noexcept
+	{
+		HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+		if (ntdll == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+
+		WinAPITypeList::NTSetInformationThread pNtSetInformationThread = reinterpret_cast<WinAPITypeList::NTSetInformationThread>(GetProcAddress(ntdll, "NtSetInformationThread"));
+		if (pNtSetInformationThread == nullptr)
+		{
+			return false;
+		}
+
+		int status =pNtSetInformationThread(GetCurrentThread(), ThreadHideFromDebugger, NULL, NULL);
+		if ((status >= 0) == false)
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 }

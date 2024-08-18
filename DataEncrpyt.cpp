@@ -38,6 +38,7 @@ namespace HYJ
 
 	bool DataEncrypt::DataDeCryption(std::vector<unsigned char>& data, size_t dataSize)
 	{
+
 		if (!CryptUnprotectMemory(data.data(), data.size(), CRYPTPROTECTMEMORY_SAME_PROCESS))
 		{
 			DEBUG_LOG("dataEncryption", "dataDecryption Fail");
