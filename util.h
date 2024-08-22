@@ -12,9 +12,9 @@ namespace HYJ
 		
 		static bool StringCopy(char* buffer, char* str, size_t size);
 		
-		static std::unique_ptr<unsigned char[]> GetReadFileAsync(const char* fileName,DWORD bufferSize = 4096);
+		static std::unique_ptr<unsigned char[]> GetReadFileAsync(const char* fileName,size_t* outFileSize,DWORD bufferSize = 4096);
 		
-		static std::unique_ptr<unsigned char[]> GetSha256(const unsigned char* data, size_t size);
+		static const std::string GetSha256(const unsigned char* data, size_t size);
 
 		static unsigned int GetFunctionSize(const void* address);
 

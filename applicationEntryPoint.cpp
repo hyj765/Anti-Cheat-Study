@@ -1,4 +1,4 @@
-#include "ThreadManager.h"
+#include "AntiDebugger.h"
 using namespace std;
 
 void print() {
@@ -9,7 +9,8 @@ void print() {
 
 int main()
 {
-	HYJ::ThreadManager::GetInstance().CreateThreads(print);
+
+	
 
 
 	return 0;

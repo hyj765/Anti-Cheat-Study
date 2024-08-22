@@ -27,7 +27,7 @@ namespace HYJ
 		return false;
 	}
 
-	std::unique_ptr<unsigned char[]> Util::GetReadFileAsync(const char* fileName, DWORD bufferSize)
+	std::unique_ptr<unsigned char[]> Util::GetReadFileAsync(const char* fileName, size_t* outFileSize,DWORD bufferSize)
 	{
 		HANDLE hFile = CreateFileA(fileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (hFile == INVALID_HANDLE_VALUE)
@@ -40,7 +40,7 @@ namespace HYJ
 		{
 			return nullptr;
 		}
-
+		
 		std::unique_ptr<unsigned char[]> buffer = std::make_unique<unsigned char[]>(fileSize);
 		
 		OVERLAPPED ol = { 0 };
@@ -66,14 +66,18 @@ namespace HYJ
 				{
 					if (!GetOverlappedResult(hFile, &ol, &readBytes, TRUE))
 					{
-						CloseHandle(ol.hEvent);
+						if (ol.hEvent != NULL) {
+							CloseHandle(ol.hEvent);
+						}
 						CloseHandle(hFile);
 						return nullptr;
 					}
 				}
 				else
 				{
-					CloseHandle(ol.hEvent);
+					if(ol.hEvent != NULL){
+						CloseHandle(ol.hEvent);
+					}
 					CloseHandle(hFile);
 					return nullptr;
 				}
@@ -86,11 +90,17 @@ namespace HYJ
 
 			totalRead += readBytes;
 			ol.Offset += readBytes;
-			ResetEvent(ol.hEvent);
+			if (ol.hEvent != NULL) {
+				ResetEvent(ol.hEvent);
+			}
+			else {
+				break;
+			}
 		}
 
-
-		CloseHandle(ol.hEvent);
+		if (ol.hEvent != NULL) {
+			CloseHandle(ol.hEvent);
+		}
 		CloseHandle(hFile);
 
 		if (totalRead != fileSize)
@@ -98,10 +108,12 @@ namespace HYJ
 			return nullptr;
 		}
 
+		*outFileSize = fileSize;
+
 		return buffer;
 	}
 
-	std::unique_ptr<unsigned char[]> Util::GetSha256(const unsigned char* data, size_t size)
+	const std::string Util::GetSha256(const unsigned char* data, size_t size)
 	{
 		return SHA256::CalculateSha256(data, size);
 	}

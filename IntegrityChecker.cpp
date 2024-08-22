@@ -1,30 +1,41 @@
 #include "IntegrityChecker.h"
 #include "util.h"
-
+#include "PEParser.h"
 
 namespace HYJ
 {
 
 	IntegrityChecker::~IntegrityChecker(){}
 
-	char* IntegrityChecker::GetSectionHash() noexcept
+	std::string IntegrityChecker::GetSectionHash(const char* sectionName) noexcept
 	{
-		
 
-		return NULL;
+		auto sectionHeader = peparser.get()->GetSectionHeader(sectionName);
+
+		size_t dataSize = 0;
+
+		std::unique_ptr<unsigned char[]> sectionData = peparser.get()->GetSectionBody(sectionHeader,&dataSize);
+		if (dataSize == 0)
+		{
+			DEBUG_LOG("integrity", "Fail To Get DataSize");
+			return "";
+		}
+		
+		return Util::GetSha256(sectionData.get(),dataSize);
+
 	}
 
-	unsigned char* IntegrityChecker::GetFileHash(const char* fileName) noexcept
+	const std::string IntegrityChecker::GetFileHash(const char* fileName) noexcept
 	{
-		std::unique_ptr<unsigned char[]> fileData =Util::GetReadFileAsync(fileName);
+		size_t fileSize = 0;
+		std::unique_ptr<unsigned char[]> fileData =Util::GetReadFileAsync(fileName,&fileSize);
 		if (fileData == nullptr)
 		{
-			return nullptr;
+			DEBUG_LOG("integrity", "filedata is Empty");
+			return "";
 		}
-
-		unsigned char* hash =Util::GetSha256(fileData.get(),sizeof(fileData.get()));
-
-		return hash;
+		//sizeof(filedata.get()) is not correct data size so it need to be fix it
+		return Util::GetSha256(fileData.get(),fileSize);
 	}
 
 	/*	
@@ -51,6 +62,24 @@ namespace HYJ
 			return false;
 		}
 		
+		return true;
+	}
+
+	bool IntegrityChecker::CompareFileIntegrity(std::string fileHash, std::string fileName) noexcept
+	{
+
+		if (hashList.find(fileName) == hashList.end())
+		{
+			DEBUG_LOG("integrity", "unknown FileName");
+			return false;
+		}
+
+		if (fileHash != hashList[fileName])
+		{
+			DEBUG_LOG("integrity", "integrity check fail");
+			return false;
+		}
+
 		return true;
 	}
 

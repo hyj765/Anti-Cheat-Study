@@ -12,4 +12,4 @@
 #include "util.h"
 #include "ThreadManager.h"
 
-#define DEBUG_LOG(location, msg) std::cerr<< "[DEBUG] " << location << " - " << msg << std::endl;
+#define DEBUG_LOG(location, msg) std::cerr<< "[DEBUG] " << location << " - " << msg << '\n';

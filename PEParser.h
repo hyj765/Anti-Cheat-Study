@@ -20,9 +20,9 @@ namespace HYJ
 		
 		PIMAGE_SECTION_HEADER GetSectionHeader(const char* sectionHeaderName) noexcept;
 		
-		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept;
+		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader, size_t* dataSize) noexcept;
 	
-		unsigned long GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
+		ULONGLONG GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
 
 		PEParser();
 

@@ -144,8 +144,10 @@ namespace HYJ
 		return nullptr;
 	}
 
-	std::unique_ptr<unsigned char[]> PEParser::GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader) noexcept
+	std::unique_ptr<unsigned char[]> PEParser::GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader, size_t* dataSize) noexcept
 	{
+		*dataSize = sectionHeader->Misc.VirtualSize;
+
 		std::unique_ptr<unsigned char[]> bytes = std::make_unique<unsigned char[]>(sectionHeader->Misc.VirtualSize);
 		
 		long sectionVirtualAddress = static_cast<long>(sectionHeader->VirtualAddress);
@@ -155,7 +157,7 @@ namespace HYJ
 		return bytes;
 	}
 
-	unsigned long PEParser::GetAddressFromImportAddressTable(const char* LibraryName, const char* functionName)
+	ULONGLONG PEParser::GetAddressFromImportAddressTable(const char* LibraryName, const char* functionName)
 	{
 		
 		IMAGE_DATA_DIRECTORY importDataDirectory = optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];

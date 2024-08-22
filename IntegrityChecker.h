@@ -1,20 +1,22 @@
 #pragma once
 #include <Windows.h>
 #include<unordered_map>
+#include<iostream>
 
 
 namespace HYJ
 {
+	class PEParser;
 
 	class IntegrityChecker
 	{
 	public:
 
-		char* GetSectionHash() noexcept;
+		std::string GetSectionHash(const char* sectionName) noexcept;
 		
-		unsigned char* GetFileHash(const char* fileNmae) noexcept;
+		const std::string GetFileHash(const char* fileNmae) noexcept;
 
-		bool CompareFileIntegrity() noexcept;
+		bool CompareFileIntegrity(std::string fileHash, std::string fileName) noexcept;
 		
 		bool CompareFunctionIntegrity() noexcept;
 		
@@ -25,10 +27,14 @@ namespace HYJ
 		static bool CheckIATAddress(void* address) noexcept;
 
 	private:
-		IntegrityChecker();
+		
+		IntegrityChecker() :peparser(std::make_unique<PEParser>()) {};
+		
 		~IntegrityChecker();
+
 		std::unordered_map<std::string, std::string> hashList;
 		
+		std::unique_ptr<PEParser> peparser;
 	};
 
 

@@ -30,6 +30,11 @@ namespace HYJ
 		}
 
 		HMODULE kernel32Handle =LoadLibraryA("kernel32.dll");
+		if (kernel32Handle == NULL)
+		{
+			return false;
+		}
+
 		void* address = GetProcAddress(kernel32Handle, "LoadLibraryA");
 		
 		FunctionHook::SetHook(address,functionAddress,DllInjectionChecker::LoadLibraryA_originalCode);
@@ -97,7 +102,7 @@ namespace HYJ
 	bool ProcessProtector::AntiDllinjection()
 	{
 		HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
-		if (kernel32 == INVALID_HANDLE_VALUE)
+		if (kernel32 == NULL)
 		{
 			return false;
 		}

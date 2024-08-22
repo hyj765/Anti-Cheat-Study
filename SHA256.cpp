@@ -5,13 +5,14 @@
 namespace HYJ
 {
 
+#define SHA256_LENGTH 32
 	
-	std::unique_ptr<unsigned char[]> SHA256::CalculateSha256(const unsigned char* text, size_t textlength)
+	std::string SHA256::CalculateSha256(const unsigned char* text, size_t textlength)
 	{	
-		std::unique_ptr<unsigned char[]> buffer = std::make_unique<unsigned char[]>(36);
-		SHA256_Encrpyt(text, textlength, buffer.get());
+		unsigned char buffer[SHA256_LENGTH];
+		SHA256_Encrpyt(text, static_cast<UINT>(textlength), buffer);
 
-		return buffer;
+		return std::string(reinterpret_cast<const char*>(buffer), SHA256_LENGTH);
 	}
 
 

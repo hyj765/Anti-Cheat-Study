@@ -7,7 +7,7 @@ namespace HYJ
 
 		std::string buffer;
 		buffer.resize(str.size());
-		int keySize = strlen(key);
+		size_t keySize = strlen(key);
 
 		for (int i = 0; i < str.size(); ++i)
 		{
@@ -27,7 +27,7 @@ namespace HYJ
 
 	bool DataEncrypt::DataEnCryption(std::vector<unsigned char>& data, size_t size)
 	{
-		if (!CryptProtectMemory(data.data(),data.size(),CRYPTPROTECTMEMORY_SAME_PROCESS))
+		if (!CryptProtectMemory(data.data(), static_cast<DWORD>(data.size()),CRYPTPROTECTMEMORY_SAME_PROCESS))
 		{
 			DEBUG_LOG("dataEncryption", "encrpytion fail");
 			return false;
@@ -39,7 +39,7 @@ namespace HYJ
 	bool DataEncrypt::DataDeCryption(std::vector<unsigned char>& data, size_t dataSize)
 	{
 
-		if (!CryptUnprotectMemory(data.data(), data.size(), CRYPTPROTECTMEMORY_SAME_PROCESS))
+		if (!CryptUnprotectMemory(data.data(), static_cast<DWORD>(data.size()), CRYPTPROTECTMEMORY_SAME_PROCESS))
 		{
 			DEBUG_LOG("dataEncryption", "dataDecryption Fail");
 			return false;

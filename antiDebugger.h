@@ -6,8 +6,7 @@ namespace HYJ
   
 	class AntiDebugger
 	{
-
-	    public:
+    public:
 
         AntiDebugger();
 
@@ -51,6 +50,8 @@ namespace HYJ
         
         std::invoke(function, std::forward<ARGS>(args)...);
         DWORD proceedingTime = GetTickCount() - startTime;
+
+       
 
         return (proceedingTime > LimiteProceedingTime);
     }
