@@ -18,7 +18,7 @@ namespace HYJ
 
 		bool CompareFileIntegrity(std::string fileHash, std::string fileName) noexcept;
 		
-		bool CompareFunctionIntegrity() noexcept;
+		bool CompareFunctionIntegrity(const void* functionAddress, std::string functionName);
 		
 		bool GetDllIntegrity() noexcept;
 

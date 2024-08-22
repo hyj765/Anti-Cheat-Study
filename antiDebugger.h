@@ -37,7 +37,7 @@ namespace HYJ
 
 	private:
 
-        WinAPITypeList::pNtqueryInformationProcess NtQueryInformationProcess;
+        WinAPITypeList::pNtqueryInformationProcess NtQueryInformationProcess = nullptr;
         //WinAPITypeList::isDebuggerPresentType pIsDebuggerPresent;
     };
 

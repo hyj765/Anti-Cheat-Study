@@ -6,7 +6,9 @@ namespace HYJ
 	std::set<std::string> DllInjectionChecker::WhiteList;
 	unsigned char DllInjectionChecker::LoadLibraryA_originalCode[12] = { 0, };
 	
-
+	/*
+		if lpStartAddress that thread address's infotype is mem_private then it's mean that this location was allocate by someone else 
+	*/
 	bool DllInjectionChecker::MemoryInfoMationCheck(LPTHREAD_START_ROUTINE lpStartAddress)
 	{
 		MEMORY_BASIC_INFORMATION memInfo;
@@ -108,7 +110,7 @@ namespace HYJ
 		}
 
 		HMODULE kernel32 = GetModuleHandleA("kernel32.dll");
-		if (kernel32 == INVALID_HANDLE_VALUE)
+		if (kernel32 == NULL)
 		{
 			return NULL;
 		}

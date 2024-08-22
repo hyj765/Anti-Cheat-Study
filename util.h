@@ -18,6 +18,8 @@ namespace HYJ
 
 		static unsigned int GetFunctionSize(const void* address);
 
+		static std::string GetFunctionHash(const void* address, size_t functionSize);
+
 		static std::string ConvertToLowerCaseString(std::string str) noexcept;
 		
 		static std::string ConvertToUpperCaseString(std::string str) noexcept;

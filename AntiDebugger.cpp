@@ -10,8 +10,9 @@ namespace HYJ
 	{
 	
 		HMODULE ntModule = GetModuleHandleA("ntdll.dll");
-		NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));	
-		
+		if (ntModule) {
+			NtQueryInformationProcess = reinterpret_cast<WinAPITypeList::pNtqueryInformationProcess>(GetProcAddress(ntModule, "NtQueryInformationProcess"));
+		}
 	}
 
 	AntiDebugger::~AntiDebugger(){}
@@ -148,6 +149,7 @@ namespace HYJ
 
 
 
+
 		return true;
 
 	}
@@ -155,7 +157,7 @@ namespace HYJ
 	bool AntiDebugger::BlockDbgBreakPoint() noexcept
 	{
 		HMODULE ntdllHandle=GetModuleHandleA("ntdll.dll");
-		if (ntdllHandle == INVALID_HANDLE_VALUE)
+		if (ntdllHandle == NULL)
 		{
 			return false;
 		}
@@ -178,7 +180,7 @@ namespace HYJ
 	bool AntiDebugger::BlockDebuggerAttach() noexcept
 	{
 		HMODULE ntdll = GetModuleHandleA("ntdll.dll");
-		if (ntdll == INVALID_HANDLE_VALUE)
+		if (ntdll == NULL)
 		{
 			return false;
 		}

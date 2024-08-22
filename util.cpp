@@ -133,6 +133,19 @@ namespace HYJ
 		return functionSize;
 	}
 
+	std::string Util::GetFunctionHash(const void* address, size_t functionSize)
+	{
+		std::unique_ptr<unsigned char[]> functionData = std::make_unique<unsigned char[]>(functionSize);
+		
+		if (memcpy_s(functionData.get(), functionSize, address, functionSize) != 0)
+		{
+			DEBUG_LOG("util", "Memcpy fail in GetFunctionHash");
+			return "";
+		}
+
+		return GetSha256(functionData.get(), functionSize);
+	}
+
 	std::string Util::ConvertToLowerCaseString(std::string str) noexcept
 	{
 		std::string lowerCaseString;

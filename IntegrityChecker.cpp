@@ -34,7 +34,7 @@ namespace HYJ
 			DEBUG_LOG("integrity", "filedata is Empty");
 			return "";
 		}
-		//sizeof(filedata.get()) is not correct data size so it need to be fix it
+		//sizeof(filedata.get()) isn't correct data size so it need to be fix it
 		return Util::GetSha256(fileData.get(),fileSize);
 	}
 
@@ -47,6 +47,7 @@ namespace HYJ
 		DWORD oldProtect = 0;
 		if (!VirtualProtect(address, 1, PAGE_READONLY, &oldProtect))
 		{
+			DEBUG_LOG("integrity", "fail to Proceeding Virtualprotect in FunctionHooked");
 			return false;
 		}
 
@@ -54,6 +55,7 @@ namespace HYJ
 
 		if (!VirtualProtect(address, 1, oldProtect, &oldProtect))
 		{
+			DEBUG_LOG("integrity", "fail to Proceeding Virtualprotect in FunctionHooked");
 			return false;
 		}
 
@@ -82,5 +84,36 @@ namespace HYJ
 
 		return true;
 	}
+
+	bool IntegrityChecker::CompareFunctionIntegrity(const void* functionAddress, std::string functionName)
+	{
+		size_t functionSize = Util::GetFunctionSize(functionAddress);
+		if (functionSize == 0)
+		{
+			DEBUG_LOG("integrity", "fail to get function size in compare function integrity");
+			return false;
+		}
+
+		std::string functionHash =Util::GetFunctionHash(functionAddress, functionSize);
+		if (functionHash == "")
+		{
+			DEBUG_LOG("integrity", "fail to get function data in compare function integrity");
+			return false;
+		}
+
+		if (hashList.find(functionName) == hashList.end())
+		{
+			DEBUG_LOG("integrity", "there is no hash in hashlist in compare function integrity");
+			return false;
+		}
+
+		if (functionHash != hashList[functionName])
+		{
+			return false;
+		}
+		
+		return true;
+	}
+
 
 }
