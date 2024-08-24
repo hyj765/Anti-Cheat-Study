@@ -122,11 +122,12 @@ namespace HYJ
 	* this function return sectionHeader in sectionheaders
 	* so previously getallsectionheader function must be proceeding
 	*/
-
-	PIMAGE_SECTION_HEADER PEParser::GetSectionHeader(const char* sectionHeaderName) noexcept
+	PIMAGE_SECTION_HEADER PEParser::GetSectionHeader(const char* sectionName) noexcept
 	{
+
 		if (sectionHeaders.size() == 0)
 		{
+			DEBUG_LOG("peparser", "Number of SectionHeaders is Zero");
 			return nullptr;
 		}
 
@@ -134,13 +135,41 @@ namespace HYJ
 		{
 			char* name = reinterpret_cast<char*>(sectionHeaders[i]->Name);
 
-			if (strcmp(name, sectionHeaderName) == 0)
+			if (strcmp(Util::ConvertToLowerCaseString(name).c_str(), Util::ConvertToLowerCaseString(sectionName).c_str()) == 0)
 			{
 				return sectionHeaders[i];
 			}
 
 		}
 
+		DEBUG_LOG("peparser", "There is no sectionHeader with matching names were found");
+
+		return nullptr;
+	}
+
+
+	PIMAGE_SECTION_HEADER PEParser::GetSectionHeader(const std::vector<PIMAGE_SECTION_HEADER>& sectionHeaderList,const char* sectionHeaderName) noexcept
+	{
+		if (sectionHeaderList.size() == 0)
+		{
+			DEBUG_LOG("peparser", "Number of SectionHeaders is Zero");
+			
+			return nullptr;
+		}
+
+		for (int i = 0; i < sectionHeaderList.size(); ++i)
+		{
+			char* name = reinterpret_cast<char*>(sectionHeaderList[i]->Name);
+
+			if (strcmp(name, sectionHeaderName) == 0)
+			{
+				return sectionHeaderList[i];
+			}
+
+		}
+
+		
+		DEBUG_LOG("peparser", "There is no sectionHeader with matching names were found");
 		return nullptr;
 	}
 
@@ -196,5 +225,41 @@ namespace HYJ
 		return NULL;
 	}
 	
+	std::unique_ptr<unsigned char[]> PEParser::ExtractSectionHeaderFromDll(HMODULE dllImageBase, size_t* dataSize)
+	{
+		
+		PIMAGE_DOS_HEADER dllDosHeader =GetDosHeader(dllImageBase);
+		if (dllDosHeader == nullptr)
+		{
+
+			DEBUG_LOG("PeParser", "can not access to Dllbase address in Extract Section Header Function");
+			
+			return nullptr;
+		}
+
+		PIMAGE_NT_HEADERS dllNtHeader = GetNtHeader(dllImageBase, dllDosHeader);
+		if (dllNtHeader == nullptr)
+		{
+			DEBUG_LOG("peparser", "can not Access to Ntheader in Extract Section Header function ");
+			
+			return nullptr;
+		}
+
+		std::vector<PIMAGE_SECTION_HEADER> sectionHeaderList = GetAllSectionHeader(dllNtHeader);
+		if (sectionHeaderList.size() == 0)
+		{	
+			DEBUG_LOG("peparser", "Number of SectionHeaders is Zero");
+			return nullptr;
+		}
+
+		PIMAGE_SECTION_HEADER dllsectionHeader = GetSectionHeader(sectionHeaderList,".text");
+		if (dllsectionHeader == nullptr)
+		{
+			DEBUG_LOG("peparser", "Can not Found with matching to .text");
+			return nullptr;
+		}
+
+		return GetSectionBody(dllsectionHeader, dataSize);
+	}
 
 }

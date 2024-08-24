@@ -118,7 +118,7 @@ namespace HYJ
 		return SHA256::CalculateSha256(data, size);
 	}
 
-	unsigned int Util::GetFunctionSize(const void* address)	
+	size_t Util::GetFunctionSize(const void* address)	
 	{
 		const unsigned char* functionAddress = static_cast<const unsigned char*>(address);
 		
@@ -126,8 +126,9 @@ namespace HYJ
 
 		do
 		{
-			functionSize++;
-		}while( *(functionAddress++) != 0x3C);
+			++functionSize;
+			printf("%x ", *functionAddress);
+		}while( *(++functionAddress) != 0x3C);
 
 
 		return functionSize;

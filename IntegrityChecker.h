@@ -20,17 +20,19 @@ namespace HYJ
 		
 		bool CompareFunctionIntegrity(const void* functionAddress, std::string functionName);
 		
-		bool GetDllIntegrity() noexcept;
+		bool CheckDllIntegrity(const char* dllName, HMODULE dllImageBase = NULL) noexcept;
 
-		static bool FunctionIsHooked(void* address) noexcept;
+		bool FunctionIsHooked(void* address) noexcept;
 
-		static bool CheckIATAddress(void* address) noexcept;
+		bool CheckIATAddress(void* address) noexcept;
+
+		IntegrityChecker() :peparser(std::make_unique<PEParser>()) {};
+
+		~IntegrityChecker();
 
 	private:
 		
-		IntegrityChecker() :peparser(std::make_unique<PEParser>()) {};
 		
-		~IntegrityChecker();
 
 		std::unordered_map<std::string, std::string> hashList;
 		

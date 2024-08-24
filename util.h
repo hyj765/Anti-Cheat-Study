@@ -16,7 +16,7 @@ namespace HYJ
 		
 		static const std::string GetSha256(const unsigned char* data, size_t size);
 
-		static unsigned int GetFunctionSize(const void* address);
+		static size_t GetFunctionSize(const void* address);
 
 		static std::string GetFunctionHash(const void* address, size_t functionSize);
 

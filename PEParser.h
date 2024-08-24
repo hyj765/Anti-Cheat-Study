@@ -18,14 +18,20 @@ namespace HYJ
 		
 		std::vector<PIMAGE_SECTION_HEADER> GetAllSectionHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept;
 		
-		PIMAGE_SECTION_HEADER GetSectionHeader(const char* sectionHeaderName) noexcept;
+		PIMAGE_SECTION_HEADER GetSectionHeader(const std::vector<PIMAGE_SECTION_HEADER>& sectionHeaderList ,const char* sectionHeaderName) noexcept;
+		
+		PIMAGE_SECTION_HEADER GetSectionHeader(const char* sectionName) noexcept;
 		
 		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader, size_t* dataSize) noexcept;
 	
 		ULONGLONG GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
 
-		PEParser();
+		std::unique_ptr<unsigned char[]> ExtractSectionHeaderFromDll(HMODULE dllImageBase, size_t* dataSize);
+		
 
+
+		PEParser();
+		~PEParser() = default;
 	private:
 		
 		void* imagebase;

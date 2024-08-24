@@ -11,6 +11,11 @@ namespace HYJ
 	{
 
 		auto sectionHeader = peparser.get()->GetSectionHeader(sectionName);
+		if (sectionHeader == nullptr)
+		{
+			DEBUG_LOG("integrity", "fail to get section header");
+			return "";
+		}
 
 		size_t dataSize = 0;
 
@@ -114,6 +119,58 @@ namespace HYJ
 		
 		return true;
 	}
+
+	bool IntegrityChecker::CheckDllIntegrity(const char* dllName, HMODULE dllImageBase) noexcept
+	{
+
+		if (dllImageBase == NULL)
+		{
+			dllImageBase = LoadLibraryA(dllName);
+			if (dllImageBase == NULL)
+			{
+				DEBUG_LOG("Integrity", "invalid dll path in Checkdllintegrity");
+				return false;
+			}
+		}
+
+		size_t dataSize;
+		std::unique_ptr<unsigned char[]> Sectiondata=peparser.get()->ExtractSectionHeaderFromDll(dllImageBase, &dataSize);
+				
+
+		std::string dllCodeHash = Util::GetSha256(Sectiondata.get(), dataSize);
+		if (dllCodeHash == "")
+		{
+			DEBUG_LOG("integrity", "fail to get dll Hash Value");
+			return false;
+		}
+
+
+		if (hashList.find(std::string(dllName)) == hashList.end())
+		{
+			DEBUG_LOG("integrity", "dll hashList size is zero");
+			return false;
+		}
+
+		if (hashList[dllName] != dllCodeHash)
+		{
+			return false;
+		}
+
+		return true;
+
+	}
+
+	// 내일 구현
+	/*
+	* 
+	bool IntegrityChecker::CheckIATAddress(void* address) noexcept
+	{
+
+		return false;
+	}
+
+	*/
+
 
 
 }
