@@ -9,21 +9,21 @@ namespace HYJ
 	{
 		imagebase= GetModuleHandle(NULL);
 		
-		dosHeader = GetDosHeader(imagebase);
+		dosHeader = GetDosHeader(imagebase,true);
 		
-		ntHeader = GetNtHeader(imagebase, dosHeader);
+		ntHeader = GetNtHeader(imagebase, dosHeader,true);
 		
-		fileHeader = GetFileHeader(ntHeader);
+		fileHeader = GetFileHeader(ntHeader,true);
 		
-		optionalHeader = GetOptionalHeader(ntHeader);
+		optionalHeader = GetOptionalHeader(ntHeader,true);
 		
 		sectionHeaders = GetAllSectionHeader(ntHeader);
 
 	}
 
-	PIMAGE_DOS_HEADER PEParser::GetDosHeader(void* imagebase) noexcept
+	PIMAGE_DOS_HEADER PEParser::GetDosHeader(void* imagebase, bool selfFlag) noexcept
 	{
-		if (dosHeader != nullptr)
+		if (dosHeader != nullptr && selfFlag == true )
 		{
 			return dosHeader;
 		}
@@ -43,9 +43,9 @@ namespace HYJ
 		return nullptr;
 	}
 
-	PIMAGE_NT_HEADERS PEParser::GetNtHeader(void* imagebase, const PIMAGE_DOS_HEADER dosHeader) noexcept
+	PIMAGE_NT_HEADERS PEParser::GetNtHeader(void* imagebase, const PIMAGE_DOS_HEADER dosHeader, bool selfFlag) noexcept
 	{
-		if (ntHeader != nullptr)
+		if (ntHeader != nullptr && selfFlag == true)
 		{
 			return ntHeader;
 		}
@@ -60,9 +60,9 @@ namespace HYJ
 		return pNtHeader;
 	}
 
-	PIMAGE_FILE_HEADER PEParser::GetFileHeader(const PIMAGE_NT_HEADERS ntHeaders) noexcept
+	PIMAGE_FILE_HEADER PEParser::GetFileHeader(const PIMAGE_NT_HEADERS ntHeaders,bool selfFlag) noexcept
 	{
-		if (fileHeader != nullptr)
+		if (fileHeader != nullptr && selfFlag == true)
 		{
 			return fileHeader;
 		}
@@ -75,7 +75,7 @@ namespace HYJ
 		return &ntHeaders->FileHeader;
 	}
 
-	PIMAGE_OPTIONAL_HEADER PEParser::GetOptionalHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept
+	PIMAGE_OPTIONAL_HEADER PEParser::GetOptionalHeader(const PIMAGE_NT_HEADERS ntHeader, bool selfFlag) noexcept
 	{
 		if (optionalHeader != nullptr)
 		{
@@ -91,7 +91,7 @@ namespace HYJ
 	}
 
 
-	std::vector<PIMAGE_SECTION_HEADER> PEParser::GetAllSectionHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept
+	std::vector<PIMAGE_SECTION_HEADER> PEParser::GetAllSectionHeader(const PIMAGE_NT_HEADERS ntHeader, bool selfFlag) noexcept
 	{
 		
 		if (sectionHeaders.size() != 0)
@@ -228,7 +228,7 @@ namespace HYJ
 	std::unique_ptr<unsigned char[]> PEParser::ExtractSectionHeaderFromDll(HMODULE dllImageBase, size_t* dataSize)
 	{
 		
-		PIMAGE_DOS_HEADER dllDosHeader =GetDosHeader(dllImageBase);
+		PIMAGE_DOS_HEADER dllDosHeader = GetDosHeader(dllImageBase);
 		if (dllDosHeader == nullptr)
 		{
 

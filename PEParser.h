@@ -8,15 +8,15 @@ namespace HYJ
 	{
 	public:
 
-		PIMAGE_DOS_HEADER GetDosHeader(void* imagebase) noexcept;
+		PIMAGE_DOS_HEADER GetDosHeader(void* imagebase, bool selfFlag = false) noexcept;
 		
-		PIMAGE_NT_HEADERS GetNtHeader(void* imagebase, const PIMAGE_DOS_HEADER dosHeader) noexcept;
+		PIMAGE_NT_HEADERS GetNtHeader(void* imagebase, const PIMAGE_DOS_HEADER dosHeader, bool selfFlag = false ) noexcept;
 		
-		PIMAGE_FILE_HEADER GetFileHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept;
+		PIMAGE_FILE_HEADER GetFileHeader(const PIMAGE_NT_HEADERS ntHeader, bool selfFlag = false ) noexcept;
 		
-		PIMAGE_OPTIONAL_HEADER GetOptionalHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept;
+		PIMAGE_OPTIONAL_HEADER GetOptionalHeader(const PIMAGE_NT_HEADERS ntHeader, bool selfFlag = false ) noexcept;
 		
-		std::vector<PIMAGE_SECTION_HEADER> GetAllSectionHeader(const PIMAGE_NT_HEADERS ntHeader) noexcept;
+		std::vector<PIMAGE_SECTION_HEADER> GetAllSectionHeader(const PIMAGE_NT_HEADERS ntHeader, bool selfFlag = false ) noexcept;
 		
 		PIMAGE_SECTION_HEADER GetSectionHeader(const std::vector<PIMAGE_SECTION_HEADER>& sectionHeaderList ,const char* sectionHeaderName) noexcept;
 		
