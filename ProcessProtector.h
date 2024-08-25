@@ -3,12 +3,13 @@
 
 namespace HYJ
 {
-	
-	class FunctionHook;
 	class AntiDebugger;
+
 	class AntiMacro;
-	class DataEncrypt;
-	class AntiDllInjector;
+
+	class DllInjectionChecker;
+
+	class IntegrityChecker;
 
 	/*
 		ProcessProtector class include each Classes Anti Dll, Anti Debugger, Integrity Check class
@@ -61,9 +62,7 @@ namespace HYJ
 		
 		ProcessProtector& operator=(ProcessProtector&&) noexcept = delete; // move operator delete
 		
-		std::unique_ptr<FunctionHook> hookManager;
 		
-		std::unique_ptr<AntiDebugger> antiDebugger;
 		
 		int threadNumber = 0;
 		
@@ -77,6 +76,11 @@ namespace HYJ
 
 		static unsigned char originalThreadThunkBytes[12];
 
+		std::unique_ptr<AntiDebugger> antiDebugger;
+
+		std::unique_ptr<AntiMacro> antiMacro;
+
+		std::unique_ptr<DllInjectionChecker> antiDllInjector;
 
 	};
 

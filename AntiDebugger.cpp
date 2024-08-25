@@ -6,6 +6,7 @@
 
 namespace HYJ
 {
+
 	AntiDebugger::AntiDebugger()
 	{
 	
@@ -143,16 +144,12 @@ namespace HYJ
 
 	}
 
+	/*
 	bool AntiDebugger::CheckIsDebuggerPresentModified() noexcept
 	{
-
-
-
-
-
 		return true;
-
 	}
+	*/
 
 	bool AntiDebugger::BlockDbgBreakPoint() noexcept
 	{

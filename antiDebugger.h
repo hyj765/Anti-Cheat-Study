@@ -26,7 +26,7 @@ namespace HYJ
         
         bool CheckHardWareCheckPoint() noexcept;
 
-        bool CheckIsDebuggerPresentModified() noexcept;
+        //bool CheckIsDebuggerPresentModified() noexcept;
 
         bool BlockDbgBreakPoint() noexcept;
 

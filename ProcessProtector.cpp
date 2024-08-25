@@ -4,13 +4,15 @@
 #include <TlHelp32.h>
 #include "ThreadManager.h"
 #include "AntiDllInjector.h"
+#include "AntiMacro.h"
 
 namespace HYJ
 {
 	unsigned char ProcessProtector::originalThreadThunkBytes[12] = { 0 };
+
 	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
-	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id()), hookManager(std::make_unique<FunctionHook>()), antiDebugger(std::make_unique<AntiDebugger>())
+	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id()) ,antiDllInjector(std::make_unique<DllInjectionChecker>()), antiDebugger(std::make_unique<AntiDebugger>()), antiMacro(std::make_unique<AntiMacro>())
 	{
 		InitializeCriticalSection(&criticalSection);
 	};
@@ -49,7 +51,7 @@ namespace HYJ
 		
 		threadNumber = GetCurrentThreadId();
 
-		if ( hookManager->FunctionBlock(address, threadNumber))
+		if ( FunctionHook::FunctionBlock(address, threadNumber))
 		{
 			status = true;
 		}
@@ -67,7 +69,7 @@ namespace HYJ
 		EnterCriticalSection(&criticalSection);
 		threadNumber = GetCurrentThreadId();
 		
-		if (hookManager->FunctionUnBlock(address, threadNumber))
+		if (FunctionHook::FunctionUnBlock(address, threadNumber))
 		{
 			status = true;
 		}

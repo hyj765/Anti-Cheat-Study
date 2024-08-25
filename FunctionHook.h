@@ -7,7 +7,6 @@ namespace HYJ
 	class FunctionHook
 	{
 	public:
-		
 		static bool SetHook(void* targetFunctionAddress, void* hookFunctionAddress, unsigned char* originalBuff = nullptr);
 		
 		static bool UnHook(void* targetFunctionAddress, unsigned char* originalBytes);

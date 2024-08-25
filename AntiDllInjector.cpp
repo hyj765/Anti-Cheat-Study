@@ -3,6 +3,8 @@
 #include "FunctionHook.h"
 namespace HYJ
 {
+	constexpr int MAX_MODULE_HANDLE = 1024;
+
 	std::set<std::string> DllInjectionChecker::WhiteList;
 	unsigned char DllInjectionChecker::LoadLibraryA_originalCode[12] = { 0, };
 	

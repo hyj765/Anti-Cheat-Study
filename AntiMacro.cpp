@@ -2,6 +2,10 @@
 
 namespace HYJ {
 
+	HHOOK AntiMacro::mouseMonitor = nullptr;
+
+	HHOOK AntiMacro::keyboardMonitor = nullptr;
+
 	LRESULT CALLBACK AntiMacro::AntiKeyBoardMacroHookFunction(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 

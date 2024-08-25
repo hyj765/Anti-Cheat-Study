@@ -30,6 +30,7 @@ namespace HYJ
 
 		if (imagebase == nullptr)
 		{
+			DEBUG_LOG("peparser", "ntheader was null in GetDosHeader");
 			return nullptr;
 		}
 
@@ -52,6 +53,7 @@ namespace HYJ
 
 		if (imagebase == nullptr || dosHeader == nullptr)
 		{
+			DEBUG_LOG("peparser", "ntheader was null in GetNtHeader Function");
 			return nullptr;
 		}
 
@@ -69,6 +71,7 @@ namespace HYJ
 
 		if (ntHeaders == nullptr)
 		{
+			DEBUG_LOG("peparser", "ntheader was null in GetFileHeader Function");
 			return nullptr;
 		}
 
@@ -84,6 +87,7 @@ namespace HYJ
 
 		if (ntHeader == nullptr)
 		{
+			DEBUG_LOG("peparser", "ntheader was null in GetOptionalHeader Function");
 			return nullptr;
 		}
 
@@ -221,6 +225,7 @@ namespace HYJ
 			importDescriptor++;
 		}
 
+		DEBUG_LOG("peparser", "Can not found any Object that matching name");
 
 		return NULL;
 	}

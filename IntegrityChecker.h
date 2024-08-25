@@ -17,6 +17,8 @@ namespace HYJ
 		const std::string GetFileHash(const char* fileNmae) noexcept;
 
 		bool CompareFileIntegrity(std::string fileHash, std::string fileName) noexcept;
+
+		void InsertHashList(std::string keyName, std::string hash) noexcept;
 		
 		bool CompareFunctionIntegrity(const void* functionAddress, std::string functionName);
 		
@@ -26,17 +28,16 @@ namespace HYJ
 
 		bool CheckIATAddress(void* address) noexcept;
 
-		IntegrityChecker() :peparser(std::make_unique<PEParser>()) {};
+		IntegrityChecker();
 
 		~IntegrityChecker();
 
 	private:
 		
-		
-
 		std::unordered_map<std::string, std::string> hashList;
 		
 		std::unique_ptr<PEParser> peparser;
+
 	};
 
 

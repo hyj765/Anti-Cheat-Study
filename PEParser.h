@@ -28,9 +28,8 @@ namespace HYJ
 
 		std::unique_ptr<unsigned char[]> ExtractSectionHeaderFromDll(HMODULE dllImageBase, size_t* dataSize);
 		
-
-
 		PEParser();
+
 		~PEParser() = default;
 	private:
 		

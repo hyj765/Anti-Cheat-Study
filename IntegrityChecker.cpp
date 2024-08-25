@@ -4,6 +4,7 @@
 
 namespace HYJ
 {
+	IntegrityChecker::IntegrityChecker() : peparser(std::make_unique<PEParser>()){}
 
 	IntegrityChecker::~IntegrityChecker(){}
 
@@ -158,6 +159,11 @@ namespace HYJ
 
 		return true;
 
+	}
+
+	void IntegrityChecker::InsertHashList(std::string keyName, std::string hash) noexcept
+	{
+		hashList.insert({keyName,hash});
 	}
 
 	// 내일 구현
