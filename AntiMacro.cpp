@@ -6,6 +6,15 @@ namespace HYJ {
 
 	HHOOK AntiMacro::keyboardMonitor = nullptr;
 
+	std::atomic<bool> AntiMacro::doneFlag =false ;
+
+	AntiMacro::AntiMacro() {};
+
+	AntiMacro::~AntiMacro()
+	{
+		UnSetAntiMacroMonitor();
+	}
+
 	LRESULT CALLBACK AntiMacro::AntiKeyBoardMacroHookFunction(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 
@@ -46,7 +55,6 @@ namespace HYJ {
 
 	bool AntiMacro::SetAntiMacroMonitor()
 	{
-
 		if ((mouseMonitor = SetWindowsHookExA(WH_MOUSE_LL, AntiMouseMacroHookFunction, NULL, 0)) == nullptr)
 		{
 			DEBUG_LOG("Anti Macro", "SetAntiMouseMacro Hook Fail");
@@ -59,18 +67,23 @@ namespace HYJ {
 			return false;
 		}
 
+
 		MSG message;
-		while (GetMessageA(&message, NULL, 0, 0))
+		while (doneFlag.load() == false && GetMessageA(&message, NULL, 0, 0))
 		{
-			TranslateMessage(&message);
-			DispatchMessageA(&message);
+				TranslateMessage(&message);
+				DispatchMessageA(&message);
+
 		}
+
 
 		return true;
 	}
 
 	void AntiMacro::StartMonitor()
 	{
+		doneFlag.store(false);
+
 		monitorThread = ThreadManager::GetInstance().CreateThreads(SetAntiMacroMonitor);
 	}
 
@@ -89,11 +102,10 @@ namespace HYJ {
 		}
 	}
 
-	AntiMacro::AntiMacro() {};
-
-	AntiMacro::~AntiMacro()
+	void AntiMacro::QuitMonitor()
 	{
-		UnSetAntiMacroMonitor();
+		doneFlag.store(true);
 	}
+
 
 }

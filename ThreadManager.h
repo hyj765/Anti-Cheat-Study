@@ -6,7 +6,6 @@
 
 namespace HYJ
 {
-	class ThreadManager;
 
 	template <typename Function, typename... Args>
 	class Task

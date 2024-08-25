@@ -21,12 +21,20 @@ namespace HYJ
 
 		void UnSetAntiMacroMonitor();
 
+		static void QuitMonitor();
+
 		static HHOOK mouseMonitor;
 
 		static HHOOK keyboardMonitor;
 
 	private:
 		std::thread::id monitorThread;
+
+		static std::atomic<bool> doneFlag;
+
+		AntiMacro(const AntiMacro&) = delete;
+
+		AntiMacro& operator=(const AntiMacro&) = delete;
 	};
 
 }

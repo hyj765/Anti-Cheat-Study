@@ -12,7 +12,10 @@ namespace HYJ
 
 	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
-	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id()) ,antiDllInjector(std::make_unique<DllInjectionChecker>()), antiDebugger(std::make_unique<AntiDebugger>()), antiMacro(std::make_unique<AntiMacro>())
+	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id()) 
+		,antiDllInjector(std::make_unique<DllInjectionChecker>())
+		,antiDebugger(std::make_unique<AntiDebugger>())
+		,antiMacro(std::make_unique<AntiMacro>())
 	{
 		InitializeCriticalSection(&criticalSection);
 	};
