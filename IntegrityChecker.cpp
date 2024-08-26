@@ -187,17 +187,5 @@ namespace HYJ
 		return InsertHashList(std::move(fileName), std::move(fileHash));
 	}
 
-	// 내일 구현
-	/*
-	* 
-	bool IntegrityChecker::CheckIATAddress(void* address) noexcept
-	{
-
-		return false;
-	}
-
-	*/
-
-
 
 }
