@@ -5,7 +5,7 @@ namespace HYJ
 	/*
 		PeParser firstable allocate each PE Headers
 	*/
-	PEParser::PEParser()
+	PEParser::PEParser() 
 	{
 		imagebase= GetModuleHandle(NULL);
 		

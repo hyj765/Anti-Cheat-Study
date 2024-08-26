@@ -18,7 +18,9 @@ namespace HYJ
 
 		bool CompareFileIntegrity(std::string fileHash, std::string fileName) noexcept;
 
-		void InsertHashList(std::string keyName, std::string hash) noexcept;
+		bool InsertHashList(std::string&& keyName, std::string&& hash) noexcept;
+
+		bool InsertFileHash(std::string filePath);
 		
 		bool CompareFunctionIntegrity(const void* functionAddress, std::string functionName);
 		

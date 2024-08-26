@@ -73,9 +73,7 @@ namespace HYJ {
 		{
 				TranslateMessage(&message);
 				DispatchMessageA(&message);
-
 		}
-
 
 		return true;
 	}

@@ -15,5 +15,4 @@ namespace HYJ
 		return std::string(reinterpret_cast<const char*>(buffer), SHA256_LENGTH);
 	}
 
-
 }

@@ -161,9 +161,30 @@ namespace HYJ
 
 	}
 
-	void IntegrityChecker::InsertHashList(std::string keyName, std::string hash) noexcept
+	bool IntegrityChecker::InsertHashList(std::string&& keyName, std::string&& hash) noexcept
 	{
+		if (hash == "")
+		{
+			return false; 
+		}
+
 		hashList.insert({keyName,hash});
+
+		return true;
+	}
+
+	bool IntegrityChecker::InsertFileHash(std::string fileName)
+	{
+		size_t fileSize = 0;
+		std::unique_ptr<unsigned char[]> data= Util::GetReadFileAsync(fileName.c_str(), &fileSize);
+		std::string fileHash= Util::GetSha256(data.get(), fileSize);
+
+		if (fileHash == "")
+		{
+			return false;
+		}
+
+		return InsertHashList(std::move(fileName), std::move(fileHash));
 	}
 
 	// 내일 구현

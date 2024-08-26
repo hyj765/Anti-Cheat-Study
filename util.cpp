@@ -27,9 +27,10 @@ namespace HYJ
 		return false;
 	}
 
-	std::unique_ptr<unsigned char[]> Util::GetReadFileAsync(const char* fileName, size_t* outFileSize,DWORD bufferSize)
+	std::unique_ptr<unsigned char[]> Util::GetReadFileAsync(const char* fileName, size_t* outFileSize)
 	{
-		HANDLE hFile = CreateFileA(fileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		HANDLE hEvent = NULL;
+		HANDLE hFile = CreateFileA(fileName, GENERIC_READ, 0, NULL, OPEN_EXISTING,FILE_FLAG_OVERLAPPED, 0);
 		if (hFile == INVALID_HANDLE_VALUE)
 		{
 			return nullptr;
@@ -42,72 +43,48 @@ namespace HYJ
 		}
 		
 		std::unique_ptr<unsigned char[]> buffer = std::make_unique<unsigned char[]>(fileSize);
-		
+		hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+		if (hEvent == NULL)
+		{
+			DEBUG_LOG("util", "fail to allocate event");
+			return nullptr;
+		}
 		OVERLAPPED ol = { 0 };
 		
 		ol.Offset = 0;
-		ol.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+		ol.hEvent = hEvent;
 		
 		DWORD readBytes = 0;
-		DWORD totalRead = 0;
-
-		while (totalRead < fileSize)
-		{
-			if (fileSize - totalRead < bufferSize)
-			{
-				bufferSize = (fileSize - totalRead);
-			}
-
-			bool status = ReadFile(hFile, buffer.get() + totalRead, fileSize, &readBytes, &ol);
 			
-			if (!totalRead)
-			{
-				if (GetLastError() == ERROR_IO_PENDING)
-				{
-					if (!GetOverlappedResult(hFile, &ol, &readBytes, TRUE))
-					{
-						if (ol.hEvent != NULL) {
-							CloseHandle(ol.hEvent);
-						}
-						CloseHandle(hFile);
-						return nullptr;
-					}
-				}
-				else
-				{
-					if(ol.hEvent != NULL){
-						CloseHandle(ol.hEvent);
-					}
-					CloseHandle(hFile);
-					return nullptr;
-				}
-			}
-
-			if (readBytes == 0)
-			{
-				break;
-			}
-
-			totalRead += readBytes;
-			ol.Offset += readBytes;
-			if (ol.hEvent != NULL) {
-				ResetEvent(ol.hEvent);
-			}
-			else {
-				break;
-			}
-		}
-
-		if (ol.hEvent != NULL) {
-			CloseHandle(ol.hEvent);
-		}
-		CloseHandle(hFile);
-
-		if (totalRead != fileSize)
+		bool result = ReadFile(hFile, buffer.get(), fileSize, &readBytes, &ol);
+		if (result == false && GetLastError() != ERROR_IO_PENDING)
 		{
+			DEBUG_LOG("util", "fail to FileRead");
+			
+			CloseHandle(hEvent);
+			CloseHandle(hFile);
+
 			return nullptr;
 		}
+	
 
+		while (!GetOverlappedResult(hFile, &ol, &readBytes, FALSE))
+		{
+			if (GetLastError() != ERROR_IO_INCOMPLETE)
+			{
+				DEBUG_LOG("util", "fail to get overlaapedResult()");
+				
+				CloseHandle(hEvent);
+				CloseHandle(hFile);
+
+				return nullptr;
+			}
+		}
+
+		
+		CloseHandle(hEvent);
+		CloseHandle(hFile);
+		
 		*outFileSize = fileSize;
 
 		return buffer;
@@ -127,7 +104,6 @@ namespace HYJ
 		do
 		{
 			++functionSize;
-			printf("%x ", *functionAddress);
 		}while( *(++functionAddress) != 0x3C);
 
 

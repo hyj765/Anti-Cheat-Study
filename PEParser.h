@@ -31,6 +31,7 @@ namespace HYJ
 		PEParser();
 
 		~PEParser() = default;
+
 	private:
 		
 		void* imagebase;
