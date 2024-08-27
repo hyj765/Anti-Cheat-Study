@@ -4,7 +4,7 @@
 
 namespace HYJ
 {
-	//class IntegrityChecker;
+	class PEParser;
 
 	class DllInjectionChecker
 	{
@@ -16,6 +16,8 @@ namespace HYJ
 
 		bool ImportAddressTableCheck(const char* functionName, const char* moduleName);
 		
+		void GetIATSnapShot() noexcept;
+
 		static void PushWhiteListDllName(std::string dllName) noexcept;
 
 		static bool IsExistInWhiteList(std::string dllName) noexcept;
@@ -31,10 +33,14 @@ namespace HYJ
 		
 		static unsigned char LoadLibraryA_originalCode[12];
 		
-		DllInjectionChecker() {};
-		~DllInjectionChecker() {};
+		std::map<std::string, ULONG> originalIATTableSnapShot;
+
+		DllInjectionChecker(const std::shared_ptr<PEParser>& pe);
+		~DllInjectionChecker();
+
 	private:			
 		const std::vector<std::string> windowsBaseDllList = {"ntdll.dll","kernel32.dll","advapi32.dll","user32.dll","msvcrt.dll","kernelbase.dll","msvcp140d.dll","vcruntime140_1d.dll","vcruntime140d.dll","ucrtbased.dll"};		
+		std::shared_ptr<PEParser> peParser;
 	};
 
 }

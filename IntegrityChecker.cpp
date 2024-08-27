@@ -4,14 +4,14 @@
 
 namespace HYJ
 {
-	IntegrityChecker::IntegrityChecker() : peparser(std::make_unique<PEParser>()){}
+	IntegrityChecker::IntegrityChecker(const std::shared_ptr<PEParser>& pe) : peParser(pe){}
 
 	IntegrityChecker::~IntegrityChecker(){}
 
 	std::string IntegrityChecker::GetSectionHash(const char* sectionName) noexcept
 	{
 
-		auto sectionHeader = peparser.get()->GetSectionHeader(sectionName);
+		auto sectionHeader = peParser.get()->GetSectionHeader(sectionName);
 		if (sectionHeader == nullptr)
 		{
 			DEBUG_LOG("integrity", "fail to get section header");
@@ -20,7 +20,7 @@ namespace HYJ
 
 		size_t dataSize = 0;
 
-		std::unique_ptr<unsigned char[]> sectionData = peparser.get()->GetSectionBody(sectionHeader,&dataSize);
+		std::unique_ptr<unsigned char[]> sectionData = peParser.get()->GetSectionBody(sectionHeader,&dataSize);
 		if (dataSize == 0)
 		{
 			DEBUG_LOG("integrity", "Fail To Get DataSize");
@@ -135,7 +135,7 @@ namespace HYJ
 		}
 
 		size_t dataSize;
-		std::unique_ptr<unsigned char[]> Sectiondata=peparser.get()->ExtractSectionHeaderFromDll(dllImageBase, &dataSize);
+		std::unique_ptr<unsigned char[]> Sectiondata=peParser.get()->ExtractSectionHeaderFromDll(dllImageBase, &dataSize);
 				
 
 		std::string dllCodeHash = Util::GetSha256(Sectiondata.get(), dataSize);
@@ -163,8 +163,9 @@ namespace HYJ
 
 	bool IntegrityChecker::InsertHashList(std::string&& keyName, std::string&& hash) noexcept
 	{
-		if (hash == "")
+		if (hash == "" || keyName == "")
 		{
+			DEBUG_LOG("integrity", "HashValue or KeyName is None");
 			return false; 
 		}
 
@@ -181,6 +182,7 @@ namespace HYJ
 
 		if (fileHash == "")
 		{
+			DEBUG_LOG("integrity", "HashValue is None");
 			return false;
 		}
 

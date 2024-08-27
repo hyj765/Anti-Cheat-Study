@@ -11,6 +11,8 @@ namespace HYJ
 
 	class IntegrityChecker;
 
+	class PEParser;
+
 	/*
 		ProcessProtector class include each Classes Anti Dll, Anti Debugger, Integrity Check class
 
@@ -81,6 +83,10 @@ namespace HYJ
 		std::unique_ptr<AntiMacro> antiMacro;
 
 		std::unique_ptr<DllInjectionChecker> antiDllInjector;
+
+		std::unique_ptr<IntegrityChecker> integrityChecker;
+
+		std::shared_ptr<PEParser> peparser;
 
 	};
 

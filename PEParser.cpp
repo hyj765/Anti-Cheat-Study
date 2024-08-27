@@ -229,6 +229,41 @@ namespace HYJ
 
 		return NULL;
 	}
+
+	std::vector <std::pair<std::string, ULONGLONG>> PEParser::GetAllAddressFromIAT()
+	{
+		std::vector <std::pair<std::string, ULONGLONG>> functionList;
+		IMAGE_DATA_DIRECTORY importDataDirectory = optionalHeader->DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+
+		PIMAGE_IMPORT_DESCRIPTOR importDescriptor = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(static_cast<unsigned char*>(imagebase) + importDataDirectory.VirtualAddress);
+
+		while (importDescriptor->Name != NULL)
+		{
+
+			char* libName = reinterpret_cast<char*>(importDescriptor->Name + static_cast<unsigned char*>(imagebase));
+
+		
+			PIMAGE_THUNK_DATA originalFirstThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(static_cast<unsigned char*>(imagebase) + importDescriptor->OriginalFirstThunk);
+			PIMAGE_THUNK_DATA firstThunk = reinterpret_cast<PIMAGE_THUNK_DATA>(static_cast<unsigned char*>(imagebase) + importDescriptor->FirstThunk);
+			while (originalFirstThunk->u1.AddressOfData != NULL)
+			{
+				PIMAGE_IMPORT_BY_NAME curfunctionName = reinterpret_cast<PIMAGE_IMPORT_BY_NAME>(static_cast<unsigned char*>(imagebase) + originalFirstThunk->u1.AddressOfData);
+
+				functionList.push_back({ std::string(curfunctionName->Name), firstThunk->u1.Function});
+
+				firstThunk++;
+				originalFirstThunk++;
+			}
+				
+			
+
+			importDescriptor++;
+		}
+
+		DEBUG_LOG("peparser", "Can not found any Object that matching name");
+
+		return functionList;
+	}
 	
 	std::unique_ptr<unsigned char[]> PEParser::ExtractSectionHeaderFromDll(HMODULE dllImageBase, size_t* dataSize)
 	{

@@ -1,9 +1,15 @@
 #include "AntiDllInjector.h"
 #include <psapi.h>
 #include "FunctionHook.h"
+#include "PEParser.h"
+
 namespace HYJ
 {
 	constexpr int MAX_MODULE_HANDLE = 1024;
+
+	DllInjectionChecker::DllInjectionChecker(const std::shared_ptr<PEParser>& pe): peParser(pe) {}
+
+	DllInjectionChecker::~DllInjectionChecker() {}
 
 	std::set<std::string> DllInjectionChecker::WhiteList;
 	unsigned char DllInjectionChecker::LoadLibraryA_originalCode[12] = { 0, };
@@ -80,10 +86,28 @@ namespace HYJ
 		return true;
 	}
 
+	void DllInjectionChecker::GetIATSnapShot() noexcept
+	{
+		std::vector < std::pair < std::string, ULONGLONG >> iatFunctionLIST = peParser.get()->GetAllAddressFromIAT();
+		for (std::pair < std::string, ULONGLONG > iatFunction : iatFunctionLIST)
+		{
+			originalIATTableSnapShot.insert(iatFunction);
+		}
+	}
+
 	bool DllInjectionChecker::ImportAddressTableCheck(const char* functionName, const char* moduleName)
 	{
+		ULONGLONG functionAddress = peParser.get()->GetAddressFromImportAddressTable(moduleName, functionName);
 		
+		if (originalIATTableSnapShot.find(functionName) == originalIATTableSnapShot.end())
+		{
+			return false;
+		}
 
+		if (originalIATTableSnapShot[functionName] != functionAddress)
+		{
+			return false;
+		}
 
 		return true;
 	}

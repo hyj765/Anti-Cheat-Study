@@ -5,6 +5,8 @@
 #include "ThreadManager.h"
 #include "AntiDllInjector.h"
 #include "AntiMacro.h"
+#include "PEParser.h"
+#include "IntegrityChecker.h"
 
 namespace HYJ
 {
@@ -12,9 +14,11 @@ namespace HYJ
 
 	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
-	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id()) 
-		,antiDllInjector(std::make_unique<DllInjectionChecker>())
+	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id())
+		,peparser(std::shared_ptr<PEParser>())
+		,antiDllInjector(std::make_unique<DllInjectionChecker>(peparser))
 		,antiDebugger(std::make_unique<AntiDebugger>())
+		,integrityChecker(std::make_unique<IntegrityChecker>(peparser))
 		,antiMacro(std::make_unique<AntiMacro>())
 	{
 		InitializeCriticalSection(&criticalSection);

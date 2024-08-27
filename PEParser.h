@@ -25,9 +25,13 @@ namespace HYJ
 		std::unique_ptr<unsigned char[]> GetSectionBody(const PIMAGE_SECTION_HEADER sectionHeader, size_t* dataSize) noexcept;
 	
 		ULONGLONG GetAddressFromImportAddressTable(const char* LibraryName,const char* functionName);
+		
+		std::vector<std::pair<std::string, ULONGLONG>> GetAllAddressFromIAT();
 
 		std::unique_ptr<unsigned char[]> ExtractSectionHeaderFromDll(HMODULE dllImageBase, size_t* dataSize);
 		
+		
+
 		PEParser();
 
 		~PEParser() = default;

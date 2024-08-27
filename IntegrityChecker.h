@@ -28,9 +28,7 @@ namespace HYJ
 
 		bool FunctionIsHooked(void* address) noexcept;
 
-		bool CheckIATAddress(void* address) noexcept;
-
-		IntegrityChecker();
+		IntegrityChecker(const std::shared_ptr<PEParser>& pe);
 
 		~IntegrityChecker();
 
@@ -38,7 +36,7 @@ namespace HYJ
 		
 		std::unordered_map<std::string, std::string> hashList;
 		
-		std::unique_ptr<PEParser> peparser;
+		std::shared_ptr<PEParser> peParser;
 
 	};
 
