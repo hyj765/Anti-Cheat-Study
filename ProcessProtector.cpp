@@ -15,7 +15,7 @@ namespace HYJ
 	WinAPITypeList::BaseThreadInitThunkType ProcessProtector::functionAddress;
 
 	ProcessProtector::ProcessProtector() : mainThreadId(std::this_thread::get_id())
-		,peparser(std::shared_ptr<PEParser>())
+		,peparser(std::make_shared<PEParser>())
 		,antiDllInjector(std::make_unique<DllInjectionChecker>(peparser))
 		,antiDebugger(std::make_unique<AntiDebugger>())
 		,integrityChecker(std::make_unique<IntegrityChecker>(peparser))
