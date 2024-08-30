@@ -49,7 +49,13 @@ namespace HYJ
 		*/
 		bool OpenFunction(void* Address);
 		// even this two function's are using critical section but it take a lot of cost
+		bool CheckHardWareBreakPoint() noexcept;
 
+		bool CheckIsDebuggerAttach() noexcept;
+
+		bool DebuggerDetach() noexcept;
+
+		bool IsProcessCreateByDebugger() noexcept;
 	private:
 
 		ProcessProtector();

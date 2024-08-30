@@ -15,7 +15,7 @@ namespace HYJ
 
         bool CheckParentIsDebugger();
 
-		bool isProcessDebugged() noexcept;
+		bool IsProcessDebugged() noexcept;
 		
         bool CheckDebugPort() noexcept;
         

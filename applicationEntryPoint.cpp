@@ -1,12 +1,13 @@
 #include "ProcessProtector.h"
-#include "AntiDllInjector.h"
 using namespace std;
 
 
 int main()
 {
-
-	HYJ::ProcessProtector::GetInstance().HookLoadLibrary(HYJ::DllInjectionChecker::WhiteListLoadLibrary);
+	if (HYJ::ProcessProtector::GetInstance().CheckHardWareBreakPoint() == false)
+	{
+		printf("no");
+	}
 
 	return 0;
 }

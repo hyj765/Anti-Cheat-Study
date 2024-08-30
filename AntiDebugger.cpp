@@ -18,7 +18,7 @@ namespace HYJ
 
 	AntiDebugger::~AntiDebugger(){}
 
-	bool AntiDebugger::isProcessDebugged() noexcept
+	bool AntiDebugger::IsProcessDebugged() noexcept
 	{
 		return IsDebuggerPresent();
 	}
@@ -111,7 +111,7 @@ namespace HYJ
 		if (Process32First(snapShot, &pe))
 		{
 			do {
-				if (pe.th32ParentProcessID == pid)
+				if (pe.th32ProcessID == pid)
 				{
 					break;
 				}
@@ -119,7 +119,8 @@ namespace HYJ
 		}
 		CloseHandle(snapShot);
 		HANDLE hProcess;
-		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
+		
+		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe.th32ParentProcessID);
 		if (hProcess == NULL)
 		{
 			return false;

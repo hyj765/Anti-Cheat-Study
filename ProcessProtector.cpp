@@ -170,7 +170,28 @@ namespace HYJ
 		return false;
 	}
 
-	
+	bool ProcessProtector::CheckHardWareBreakPoint() noexcept
+	{
+		return antiDebugger.get()->CheckHardWareCheckPoint();
+	}
 
+	bool ProcessProtector::DebuggerDetach() noexcept
+	{
+		return antiDebugger.get()->BlockDebuggerAttach();
+	}
 
+	bool ProcessProtector::IsProcessCreateByDebugger() noexcept
+	{	
+		return antiDebugger.get()->CheckParentIsDebugger();
+	}
+
+	bool ProcessProtector::CheckIsDebuggerAttach() noexcept
+	{
+		if (antiDebugger.get()->IsProcessDebugged() || antiDebugger.get()->CheckDebugObjectHandle() || antiDebugger.get()->CheckDebugPort() || antiDebugger.get()->CheckDebugFlags())
+		{
+			return true;
+		}
+
+		return false;
+	}
 }
