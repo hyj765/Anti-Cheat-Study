@@ -1,5 +1,6 @@
 #pragma once
 #include"stdafx.h"
+#include <array>
 
 namespace HYJ
 {
@@ -8,8 +9,11 @@ namespace HYJ
 	{
 	public:
 		
-		static bool MultiStringSearch(std::vector<std::string>& searchList, const std::string& target);	
+		static bool MultiStringSearch(std::vector<std::string>& searchList, const std::string& targetString);	
 		
+		template<std::size_t SIZE>
+		static bool MultiStringSearchConstChar(const std::array<const char*, SIZE>& searchList, const char* targetString);
+
 		static bool StringCopy(char* buffer, char* str, size_t size);
 		
 		static std::unique_ptr<unsigned char[]> GetReadFileAsync(const char* fileName,size_t* outFileSize);
@@ -27,6 +31,18 @@ namespace HYJ
 
 	};
 	
+	template<std::size_t SIZE>
+	bool Util::MultiStringSearchConstChar(const std::array<const char*, SIZE>& searchList, const char* targetString)
+	{
+		for (const char* searchString : searchList)
+		{
+			if (strstr(ConvertToLowerCaseString(searchString).c_str(), ConvertToLowerCaseString(targetString).c_str()) != 0)
+			{
+				return true;
+			}
+		}
 
 
+		return false;
+	}
 }

@@ -151,10 +151,11 @@ namespace HYJ
 		PROCESSENTRY32 pe;
 		pe.dwSize = sizeof(pe);
 
-		if (!Process32First(snapShot, &pe))
-		{
-			return false;
-		}
+		do {
+
+
+		} while (Process32Next(snapShot,&pe));
+
 
 		return false;
 	}

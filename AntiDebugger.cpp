@@ -134,9 +134,7 @@ namespace HYJ
 			return false;
 		}
 
-		std::vector<std::string> debuggersName = { "ida.exe","ollydbg.exe","ida64.exe", "idag.exe", "idag64.exe", "idaw.exe", "idaw64.exe", "idaq.exe", "idaq64.exe", "idau.exe", "idau64.exe", "scylla.exe", "scylla_x64.exe", "scylla_x86.exe", "protection_id.exe", "x64dbg.exe", "x32dbg.exe", "windbg.exe", "reshacker.exe", "ImportREC.exe", "IMMUNITYDEBUGGER.EXE", "devenv.exe" };
-
-		if (Util::MultiStringSearch(debuggersName, nameBuffer) == false)
+		if (Util::MultiStringSearchConstChar(debuggersName, nameBuffer) == false)
 		{
 			return false;
 		}

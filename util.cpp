@@ -5,11 +5,11 @@
 
 namespace HYJ
 {
-	bool Util::MultiStringSearch(std::vector<std::string>& searchList, const std::string& target)
+	bool Util::MultiStringSearch(std::vector<std::string>& searchList, const std::string& targetString)
 	{
 		for (const std::string& searchString : searchList)
 		{
-			if (strstr(searchString.c_str(), target.c_str()) != 0)
+			if (strstr(ConvertToLowerCaseString(searchString).c_str(), ConvertToLowerCaseString(targetString).c_str()) != 0)
 			{
 				return true;
 			}
