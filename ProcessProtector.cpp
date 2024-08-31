@@ -130,7 +130,7 @@ namespace HYJ
 		return true;
 	}
 
-	bool ProcessProtector::MutiClientCheck() 
+	bool ProcessProtector::MultiClientCheck() 
 	{
 
 		wchar_t buffer[MAX_PATH];
@@ -140,22 +140,40 @@ namespace HYJ
 		}
 
 
-
 		int count = 0;
-		HANDLE snapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		HANDLE snapShot = NULL;
+		snapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 		if (snapShot == INVALID_HANDLE_VALUE)
 		{
+			DEBUG_LOG("ProcessProtector", "Fail to Get Processsnapshot");
 			return false;
 		}
 		
 		PROCESSENTRY32 pe;
 		pe.dwSize = sizeof(pe);
+		if (Process32First(snapShot, &pe) == false)
+		{
+			DEBUG_LOG("ProcessProtector", "Fail to Get ProcessStructFirst");
+			CloseHandle(snapShot);
+			return false;
+		}
 
 		do {
+			
+			if (wcscmp(pe.szExeFile, buffer) == 0)
+			{
+				count++;
+				if (count >= 2)
+				{
+					CloseHandle(snapShot);
 
+					return true;
+				}
+			}
 
 		} while (Process32Next(snapShot,&pe));
 
+		CloseHandle(snapShot);
 
 		return false;
 	}
@@ -188,11 +206,25 @@ namespace HYJ
 
 	bool ProcessProtector::CheckIsDebuggerAttach() noexcept
 	{
-		if (antiDebugger.get()->IsProcessDebugged() || antiDebugger.get()->CheckDebugObjectHandle() || antiDebugger.get()->CheckDebugPort() || antiDebugger.get()->CheckDebugFlags())
+		if (antiDebugger.get()->IsProcessDebugged() || antiDebugger.get()->CheckDebugObjectHandle() || antiDebugger.get()->CheckDebugPort() || antiDebugger.get()->CheckDebugFlags() || antiDebugger.get()->CheckProcessNtGlobalFlags())
 		{
 			return true;
 		}
 
 		return false;
+	}
+
+	bool ProcessProtector::BlockBreakPoint() noexcept
+	{
+		EnterCriticalSection(&criticalSection);
+		if (!antiDebugger.get()->BlockDbgBreakPoint())
+		{
+			LeaveCriticalSection(&criticalSection);
+			return false;
+		}
+
+		LeaveCriticalSection(&criticalSection);
+
+		return true;
 	}
 }

@@ -24,7 +24,7 @@ namespace HYJ
         
         bool CheckDebugObjectHandle()noexcept;
         
-        bool CheckProcessHeapFlags() noexcept;
+        bool CheckProcessNtGlobalFlags() noexcept;
         
         bool CheckHardWareCheckPoint() noexcept;
 
@@ -38,6 +38,7 @@ namespace HYJ
         static bool CheckFunctionProceedingTime(FUNCTION function, DWORD LimiteProceedingTime, ARGS&&... args);
 
 	private:
+        
         static constexpr std::array<const char*, 23> debuggersName = { "ida.exe","ollydbg.exe","ida64.exe", "idag.exe", "idag64.exe", "idaw.exe", "idaw64.exe", "idaq.exe", "idaq64.exe", "idau.exe", "idau64.exe", "scylla.exe", "scylla_x64.exe", "scylla_x86.exe", "protection_id.exe", "x64dbg.exe", "x32dbg.exe", "windbg.exe", "reshacker.exe", "ImportREC.exe", "IMMUNITYDEBUGGER.EXE", "devenv.exe" };
 
         WinAPITypeList::pNtqueryInformationProcess NtQueryInformationProcess = nullptr;

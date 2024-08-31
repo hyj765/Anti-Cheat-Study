@@ -76,7 +76,7 @@ namespace HYJ
 		return false;
 	}
 
-	bool AntiDebugger::CheckProcessHeapFlags() noexcept
+	bool AntiDebugger::CheckProcessNtGlobalFlags() noexcept
 	{
 		void* peb = reinterpret_cast<void*>(__readgsqword(0x60));
 		DWORD ntGlobalFlag = *(DWORD*)((unsigned char*)peb + 0x68);
@@ -195,5 +195,6 @@ namespace HYJ
 
 		return true;
 	}
+
 
 }

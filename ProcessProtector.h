@@ -31,12 +31,15 @@ namespace HYJ
 			Memory Protection Option Dep Enable Function
 		*/	
 		bool MemoryProtectionDep() noexcept;
-		/*
 		
+		/*
+			
 		*/
 		bool AntiDllinjection();
-		
-		bool MutiClientCheck();
+		/*
+			Checking Multi Client Work in this System.
+		*/
+		bool MultiClientCheck();
 		/*
 		  function Blocking function it's change first assembly code to ret
 		  so the function which this function is applied is returned without being excuted
@@ -47,8 +50,12 @@ namespace HYJ
 		/*
 			this function restore to blocking function's assembly code 
 		*/
-		bool OpenFunction(void* Address);
+
 		// even this two function's are using critical section but it take a lot of cost
+		bool OpenFunction(void* Address);
+	
+		bool BlockBreakPoint() noexcept;
+		
 		bool CheckHardWareBreakPoint() noexcept;
 
 		bool CheckIsDebuggerAttach() noexcept;
@@ -69,8 +76,6 @@ namespace HYJ
 		ProcessProtector& operator=(ProcessProtector& ref) = delete; // copy operator delete
 		
 		ProcessProtector& operator=(ProcessProtector&&) noexcept = delete; // move operator delete
-		
-		
 		
 		int threadNumber = 0;
 		
